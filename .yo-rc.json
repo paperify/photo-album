@@ -1,0 +1,7 @@
+{
+  "generator-react-webpack": {
+    "appName": "photoAlbum",
+    "style": "css",
+    "postcss": false
+  }
+}
