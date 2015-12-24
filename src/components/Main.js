@@ -16,6 +16,7 @@ import PageSizeStep from './steps/PageSizeStep';
 import BackgroundStep from './steps/BackgroundStep';
 import PageLayoutStep from './steps/PageLayoutStep';
 import SummaryStep from './steps/SummaryStep';
+import FinishStep from './steps/FinishStep';
 import ImageStep from './steps/ImageStep';
 import SplashScreenStep from './steps/SplashScreen';
 //
@@ -28,7 +29,7 @@ import WizardData from './utils/wizardData';
 let paperifyLogo = require('../images/paperify-logo-48.png');
 
 
-const stepsLength = 7;
+const stepsLength = 5;
 
 function getNavStates(indx, length) {
   let styles = []
@@ -120,7 +121,7 @@ class AppComponent extends  React.Component
       {name: 'Background', component: <BackgroundStep wizardData={wizardData}/>},
       //{name: 'Layout', component: <PageLayoutStep wizardData={wizardData}/>},
       {name: 'Image', component: <ImageStep wizardData={wizardData}/>},
-      {name: 'Finish', component: <SummaryStep wizardData={wizardData} album={this.state.selectedAlbum}/>}
+      {name: 'Finish', component: <FinishStep wizardData={wizardData} album={this.state.selectedAlbum}/>}
     ];
 
     return (
@@ -152,7 +153,7 @@ class AppComponent extends  React.Component
               <UserLogin />
             </div>
           </div>
-          {this.state.compState !== 0 ?
+          {!(this.state.compState === 0 || this.state.compState ===  stepsLength -1)?
             <SplitPane split="vertical" defaultSize={350} minSize="200">
               <div style={{margin:10}}>{steps[this.state.compState].component}</div>
               <div style={{margin:5}}>{this.state.selectedAlbum === undefined ? "Select album first" :<ImageGalleryView pageOptions={this.state.wizardData.pageOptions} template={this.state.wizardData.template} photos={this.state.selectedAlbum.photos} />}</div>

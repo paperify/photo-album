@@ -42,7 +42,7 @@ var ImageGallery = (function () {
             lastItem = lodash_1.merge(lodash_1.cloneDeep(this.PageOptions.background), { image: images[0].Image.url });
             return { background: lastItem };
         }, this) : [];
-        return {
+        var schema = {
             name: this.name,
             elementName: "ObjectSchema",
             props: {
@@ -55,6 +55,9 @@ var ImageGallery = (function () {
                 return new ImageContainer(!this.PageOptions.useImageAsBackground || doublePage ? images : images.slice(1), this.Template, this.PageOptions);
             }, this).map(function (item) { return item.generate(); })
         };
+        schema.props.items.unshift({ background: {} });
+        schema.containers.unshift(new EmptyContainer(name, "description", this.Template, this.PageOptions).generate());
+        return schema;
     };
     return ImageGallery;
 })();

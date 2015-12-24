@@ -79,7 +79,7 @@ export class ImageGallery implements INode  {
         },this):[];
 
 
-        return {
+        var schema =  {
             name:this.name,
             elementName:"ObjectSchema",
             props:{
@@ -91,6 +91,9 @@ export class ImageGallery implements INode  {
                 return new ImageContainer(!this.PageOptions.useImageAsBackground || doublePage?images:images.slice(1),this.Template,this.PageOptions)
             },this).map(function(item){return item.generate()})
         }
+        schema.props.items.unshift({background:{}});
+        schema.containers.unshift(new EmptyContainer(name,"description",this.Template,this.PageOptions).generate());
+        return schema;
     }
 }
 

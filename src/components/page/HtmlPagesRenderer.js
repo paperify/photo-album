@@ -29,7 +29,6 @@ export default class HtmlPagesRenderer extends React.Component
 			<div id="section-to-print" style={this.props.style}>
 				{pages.map(function (page, i) {
           var back = normalizeBackgrounds[i];
-          var imgStyle = {}
 					return (<HtmlPage key={'page' + i} position={i} pageNumber={page.pageNumber} widgets={this.props.widgets} background={back} pageOptions={this.props.pageOptions}>
 						{page.boxes.map(function (node, j) {
 							var elName = node.element.elementName;

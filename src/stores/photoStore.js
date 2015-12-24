@@ -120,7 +120,8 @@ var photoStore = flux.createStore({
         var imageGallery = new ImageGallery(album.name, photos, wizardData.template, wizardData.pageOptions);
         var contentType = 'image/' + type;
         if (type === "pdf") contentType = 'application/pdf';
-        var url = 'http://render-pergamon.rhcloud.com';
+        var url = 'http://photo-papermill.rhcloud.com';
+        //var url = 'http://render-pergamon.rhcloud.com';
         //var url = 'http://localhost:8080';
         //var name = this.context.router.getCurrentParams().name;
 

@@ -39,8 +39,8 @@ var defaultWizardData = function(imageSize)
       },
       text:{
         font: {
-          fontFamily: 'Arial',
-          fontSize: 10,
+          fontFamily: 'Courgette',
+          fontSize: 20,
           color: '#ffffff',
           bold: true,
           italic: true

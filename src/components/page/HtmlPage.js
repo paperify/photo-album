@@ -90,7 +90,7 @@ export default class HtmlPage extends React.Component
       //imgStyle.objectFit = 'cover';
 
        bgStyle.backgroundSize = (pageStyle.width * 2) + "px " + (pageStyle.height) + "px";
-       bgStyle.backgroundPosition = this.props.position % 2 !==1?'0% 0%':'100% 0%';
+       bgStyle.backgroundPosition = this.props.position % 2 !==0?'0% 0%':'100% 0%';
         return (
             <div id={'PAGE_' + this.props.pageNumber}>
               {/*<div style={{position:'absolute',width:pageStyle.width,height:pageStyle.height}}><img src={bg.image} style={imgStyle}></img></div>*/}
