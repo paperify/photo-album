@@ -19,11 +19,14 @@ var ImageGallery = (function () {
     }
     ImageGallery.prototype.generate = function () {
         var doublePage = this.PageOptions.double;
+        var coverPage = this.PageOptions.useCoverPage;
         var chunkedImages = lodash_1.chunk(this.ImageBoxes, this.ImagesPerPage);
         var pages = [];
         for (var i = 0; i !== chunkedImages.length; i++) {
             var images = chunkedImages[i];
-            images = images.sort(function (a, b) { return a.Image.title && a.Image.title.length > b.Image.title && b.Image.title.length ? -1 : 1; });
+            images = images.sort(function (a, b) {
+                return a.Image.title && a.Image.title.length > b.Image.title && b.Image.title.length ? -1 : 1;
+            });
             if (doublePage) {
                 pages.push(new Array(images[0]));
                 if (images.length > 1)
@@ -42,30 +45,42 @@ var ImageGallery = (function () {
             lastItem = lodash_1.merge(lodash_1.cloneDeep(this.PageOptions.background), { image: images[0].Image.url });
             return { background: lastItem };
         }, this) : [];
+        if (doublePage)
+            items = lodash_1.map(items, function (item, i) {
+                return {
+                    background: lodash_1.extend(lodash_1.clone(item.background), {
+                        size: this.PageOptions.width * 2 + 'px ' + this.PageOptions.height + 'px',
+                        position: i % 2 === 0 ? '0% 0%' : '100% 0%'
+                    })
+                };
+            }, this);
         var schema = {
             name: this.name,
             elementName: "ObjectSchema",
             props: {
-                background: this.PageOptions.background,
-                items: items
+                background: this.PageOptions.background
             },
             containers: pages.map(function (images, index) {
                 if (doublePage && index % 2 === 0)
-                    return new EmptyContainer("Page " + index, images[0].Image.title, this.Template, this.PageOptions);
-                return new ImageContainer(!this.PageOptions.useImageAsBackground || doublePage ? images : images.slice(1), this.Template, this.PageOptions);
-            }, this).map(function (item) { return item.generate(); })
+                    return new EmptyContainer("Page " + index, images[0].Image.title, items[index].background, this.Template, this.PageOptions);
+                return new ImageContainer(!this.PageOptions.useImageAsBackground || doublePage ? images : images.slice(1), items[index].background, this.Template, this.PageOptions);
+            }, this).map(function (item) {
+                return item.generate();
+            })
         };
-        schema.props.items.unshift({ background: {} });
-        schema.containers.unshift(new EmptyContainer(name, "description", this.Template, this.PageOptions).generate());
+        //if (coverPage) items.unshift({background: this.PageOptions.background});
+        if (coverPage)
+            schema.containers.unshift(new EmptyContainer(this.name, this.name, this.PageOptions.background, this.Template, this.PageOptions).generate());
         return schema;
     };
     return ImageGallery;
 })();
 exports.ImageGallery = ImageGallery;
 var EmptyContainer = (function () {
-    function EmptyContainer(title, description, Template, PageOptions) {
+    function EmptyContainer(title, description, background, Template, PageOptions) {
         this.title = title;
         this.description = description;
+        this.background = background;
         this.Template = Template;
         this.PageOptions = PageOptions;
     }
@@ -80,7 +95,8 @@ var EmptyContainer = (function () {
                 height: this.PageOptions.height - (50)
             },
             props: {
-                unbreakable: true
+                unbreakable: true,
+                background: this.background
             },
             boxes: [titleBox.generate({ top: 20, left: 100 }),
                 desBox.generate({ top: 600, left: 100, width: 600 })
@@ -90,8 +106,9 @@ var EmptyContainer = (function () {
     return EmptyContainer;
 })();
 var ImageContainer = (function () {
-    function ImageContainer(images, Template, PageOptions) {
+    function ImageContainer(images, background, Template, PageOptions) {
         this.images = images;
+        this.background = background;
         this.Template = Template;
         this.PageOptions = PageOptions;
         this.LayoutTemplate = Template.layout;
@@ -154,7 +171,8 @@ var ImageContainer = (function () {
                 height: this.PageOptions.height - (50)
             },
             props: {
-                unbreakable: true
+                unbreakable: true,
+                background: this.background
             },
             boxes: this.images.map(function (item, i) { return item.generate(styles[i]); }).concat(this.images.map(function (item, i) {
                 var style = styles[i];

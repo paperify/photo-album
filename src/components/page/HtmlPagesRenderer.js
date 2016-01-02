@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 import HtmlPage from './HtmlPage.js';
 import WidgetRenderer from './WidgetStyleRenderer.js';
@@ -22,7 +23,8 @@ export default class HtmlPagesRenderer extends React.Component
 		var customStyles = ctx['styles'] || {};
 
 		var pageBackground = (this.props.schema.props && this.props.schema.props.background) || {};
-    var items = (this.props.schema.props && this.props.schema.props.items) || [];
+    //var items = (this.props.schema.props && this.props.schema.props.items) || [];
+    var items = this.props.schema.containers.map(function(container,i){return {background: (container.props && container.props.background) || pageBackground}});
     var normalizeBackgrounds = _.map(items,function(item){return item.background}).concat(_.map(_.range(0,pages.length - items.length),function(){return pageBackground}));
 
 		return (

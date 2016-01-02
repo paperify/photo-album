@@ -1,7 +1,17 @@
 import flux from 'fluxify';
 import {ImageGallery} from '../components/layout/ImageGallery';
 import _ from 'lodash';
+import WizardData from '../components/utils/wizardData';
 import GraphicUtil from '../components/utils/graphicUtil';
+import { createHashHistory } from 'history';
+
+//const history = createHistory();
+//console.log(browserHistory);
+let history = createHashHistory();
+var url = 'http://photo-papermill.rhcloud.com';
+//var url = 'http://render-pergamon.rhcloud.com';
+//var url = 'http://localhost:8080';
+
 var reloadAlbum = function (url, imageSize, successCallback) {
 
   $.ajax({
@@ -50,11 +60,10 @@ var reloadAlbum = function (url, imageSize, successCallback) {
 }
 var i=0;
 var photoStore = flux.createStore({
-
-  id: 'formStore',
+  id: 'photoStore',
   initialState: {
-    publicAlbums: [],
-    privateAlbums: []
+    wizardData: WizardData.default,
+    history:history
   },
   actionCallbacks: {
     userLoaded: function (updater, currentUser) {
@@ -111,6 +120,8 @@ var photoStore = flux.createStore({
       });
     },
     generateAlbum(updater,item,wizardData,type){
+      if (item === undefined) item = photoStore.selectedAlbum;
+      if (wizardData === undefined) wizardData = photoStore.wizardData;
       if (type === undefined) type = "pdf";
       var album = item;
 
@@ -120,9 +131,7 @@ var photoStore = flux.createStore({
         var imageGallery = new ImageGallery(album.name, photos, wizardData.template, wizardData.pageOptions);
         var contentType = 'image/' + type;
         if (type === "pdf") contentType = 'application/pdf';
-        var url = 'http://photo-papermill.rhcloud.com';
-        //var url = 'http://render-pergamon.rhcloud.com';
-        //var url = 'http://localhost:8080';
+
         //var name = this.context.router.getCurrentParams().name;
 
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
@@ -137,6 +146,41 @@ var photoStore = flux.createStore({
             var blob = new Blob([xmlhttp.response], {type: contentType});
             var fileURL = URL.createObjectURL(blob);
             window.open(fileURL);
+          }
+        };
+
+        var pageOptions = _.extend(_.clone(wizardData.pageOptions),{
+          height: GraphicUtil.pixelToPoint(wizardData.pageOptions.height),
+          width: GraphicUtil.pixelToPoint(wizardData.pageOptions.width)
+        });
+        xmlhttp.send(JSON.stringify(_.extend(imageGallery.generate(), {
+          pageOptions: pageOptions
+        })));
+      });
+    },
+    generatePages(updater,item,wizardData,type){
+      if (type === undefined) type = "png";
+      var album = item;
+
+      //var photos = album.photos;
+      reloadAlbum(album.url, wizardData.imageSize, (photos) => {
+
+        var imageGallery = new ImageGallery(album.name, photos, wizardData.template, wizardData.pageOptions);
+        //var contentType = 'image/' + type;
+        //if (type === "pdf") contentType = 'application/pdf';
+
+        //var name = this.context.router.getCurrentParams().name;
+
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+        xmlhttp.open("POST", url + '/' + type);
+
+        //xmlhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+        xmlhttp.onreadystatechange = function () {
+          if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            var pages = JSON.parse(xmlhttp.response);
+            updater.set({pages:pages})
           }
         };
 

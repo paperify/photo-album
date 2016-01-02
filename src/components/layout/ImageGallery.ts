@@ -1,4 +1,4 @@
-import {chunk,map,clone,extend,cloneDeep,merge,filter} from 'lodash';
+import {chunk,map,clone,extend,cloneDeep,merge,filter,each} from 'lodash';
 import FlexLayout, {IFlexContainer} from "./FlexLayout";
 import * as computeLayout from 'css-layout';
 import {IFlexLayoutTemplate} from "./FlexLayout";
@@ -23,8 +23,9 @@ interface INode {
 }
 interface IPageOptions {
     imagesPerPage?:number;
-    double:boolean;
-    useImageAsBackground:boolean;
+    double?:boolean;
+    useImageAsBackground?:boolean;
+    useCoverPage?:boolean;
 
     width?:number;
     height?:number;
@@ -32,75 +33,95 @@ interface IPageOptions {
 }
 
 const IMAGES_PER_PAGE:number = 3;
-export class ImageGallery implements INode  {
+export class ImageGallery implements INode {
 
 
-    ImagesPerPage:number;
-    ImageBoxes:Array<ImageBox> = [];
-    HtmlBoxes:Array<HtmlBox> = [];
+  ImagesPerPage:number;
+  ImageBoxes:Array<ImageBox> = [];
+  HtmlBoxes:Array<HtmlBox> = [];
 
 
-    constructor(public name: string, images:Array<IImage>,public Template:any, public PageOptions?:IPageOptions) {
-        if (this.PageOptions === undefined) this.PageOptions = {};
+  constructor(public name:string, images:Array<IImage>, public Template:any, public PageOptions?:IPageOptions) {
+    if (this.PageOptions === undefined) this.PageOptions = {};
 
-        this.ImagesPerPage = this.PageOptions.imagesPerPage || IMAGES_PER_PAGE;
-        this.ImageBoxes = images.map(function(image,index){
-            return new ImageBox(image, Template.image)
-        });
+    this.ImagesPerPage = this.PageOptions.imagesPerPage || IMAGES_PER_PAGE;
+    this.ImageBoxes = images.map(function (image, index) {
+      return new ImageBox(image, Template.image)
+    });
 
-    }
-    generate() {
-        var doublePage = this.PageOptions.double;
+  }
 
+  generate() {
+    var doublePage = this.PageOptions.double;
+    var coverPage = this.PageOptions.useCoverPage;
 
-        var chunkedImages = chunk(this.ImageBoxes,this.ImagesPerPage);
+    var chunkedImages = chunk(this.ImageBoxes, this.ImagesPerPage);
 
-        var pages = [];
-        for (var i = 0;i!== chunkedImages.length;i++){
-          var images =chunkedImages[i];
-          images = images.sort(function(a,b){return  a.Image.title && a.Image.title.length >  b.Image.title && b.Image.title.length?-1:1});
-          if (doublePage) {
-            pages.push(new Array(images[0]));
-            if (images.length > 1) pages.push(images.slice(1));
+    var pages = [];
+    for (var i = 0; i !== chunkedImages.length; i++) {
+      var images = chunkedImages[i];
+      images = images.sort(function (a, b) {
+        return a.Image.title && a.Image.title.length > b.Image.title && b.Image.title.length ? -1 : 1
+      });
+      if (doublePage) {
+        pages.push(new Array(images[0]));
+        if (images.length > 1) pages.push(images.slice(1));
 
-          }
-          else{
-            pages.push(images);
-          }
-        };
-
-
-        var lastItem;
-        var items = this.PageOptions.useImageAsBackground? pages.map(function(images,index){
-          //take first image as background
-          if (doublePage && index % 2 !== 0) return {background:lastItem};
-          lastItem = merge(cloneDeep(this.PageOptions.background),{image:images[0].Image.url});
-          return {background:lastItem }
-        },this):[];
+      }
+      else {
+        pages.push(images);
+      }
+    };
 
 
-        var schema =  {
-            name:this.name,
-            elementName:"ObjectSchema",
-            props:{
-                background:this.PageOptions.background,
-                items:items
-            },
-            containers: pages.map(function(images,index){
-                if (doublePage && index % 2 === 0) return new EmptyContainer(`Page ${index}`,images[0].Image.title,this.Template,this.PageOptions);
-                return new ImageContainer(!this.PageOptions.useImageAsBackground || doublePage?images:images.slice(1),this.Template,this.PageOptions)
-            },this).map(function(item){return item.generate()})
+    var lastItem;
+    var items = this.PageOptions.useImageAsBackground ? pages.map(function (images, index) {
+      //take first image as background
+      if (doublePage && index % 2 !== 0) return {background: lastItem};
+      lastItem = merge(cloneDeep(this.PageOptions.background), {image: images[0].Image.url});
+      return {background: lastItem}
+    }, this) : [];
+
+    if (doublePage) items = map(items,function (item, i) {
+        return {
+          background: extend(clone(item.background),
+            {
+              size: this.PageOptions.width * 2 + 'px ' + this.PageOptions.height + 'px',
+              position: i % 2 === 0 ? '0% 0%' : '100% 0%'
+            }
+          )
         }
-        schema.props.items.unshift({background:{}});
-        schema.containers.unshift(new EmptyContainer(name,"description",this.Template,this.PageOptions).generate());
-        return schema;
-    }
+      },this);
+
+
+
+
+    var schema = {
+      name: this.name,
+      elementName: "ObjectSchema",
+      props: {
+        background: this.PageOptions.background,
+        //items: items
+      },
+      containers: pages.map(function (images, index) {
+        if (doublePage && index % 2 === 0) return new EmptyContainer(`Page ${index}`, images[0].Image.title, items[index].background, this.Template, this.PageOptions);
+        return new ImageContainer(!this.PageOptions.useImageAsBackground || doublePage ? images : images.slice(1),items[index].background, this.Template, this.PageOptions)
+      }, this).map(function (item) {
+        return item.generate()
+      })
+    };
+    //if (coverPage) items.unshift({background: this.PageOptions.background});
+    if (coverPage) schema.containers.unshift(new EmptyContainer(this.name, this.name, this.PageOptions.background,this.Template, this.PageOptions).generate());
+
+
+    return schema;
+  }
 }
 
 
 class EmptyContainer{
 
-  constructor(public title:string,public description:string, public Template, public PageOptions:any){
+  constructor(public title:string,public description:string,private background:any, public Template, public PageOptions:any){
 
   }
   generate() {
@@ -114,8 +135,8 @@ class EmptyContainer{
         height:this.PageOptions.height - (50)
       },
       props:{
-        unbreakable:true
-
+        unbreakable:true,
+        background:this.background
       },
       boxes:[titleBox.generate({top:20,left:100,}),
         desBox.generate({top:600,left:100,width:600})
@@ -131,7 +152,7 @@ class ImageContainer{
     ImageTemplate:any;
     TextTemplate:any;
 
-    constructor (private images:Array<ImageBox>, public Template, public PageOptions:any)
+    constructor (private images:Array<ImageBox>,private background:any, public Template, public PageOptions:any)
     {
       this.LayoutTemplate = Template.layout;
       this.ImageTemplate = Template.image;
@@ -199,7 +220,8 @@ class ImageContainer{
                 height:this.PageOptions.height - (50)
             },
             props:{
-                unbreakable:true
+                unbreakable:true,
+                background:this.background
             },
             boxes:this.images.map(function(item:INode,i:number){return item.generate(styles[i])}).concat(
               this.images.map(function(item,i:number){

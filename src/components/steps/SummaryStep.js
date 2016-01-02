@@ -17,7 +17,7 @@ export default class SummaryStep extends React.Component {
   generateExport() {
     var album = this.props.album;
     var wizardData = this.props.wizardData.value;
-    var galleryName = !!album ? album : "ImageGallery";
+    var galleryName = !!album ? album.name : "ImageGallery";
     var gallery = new ImageGallery(galleryName, album.photos, wizardData.template, wizardData.pageOptions);
 
     var exportSchema = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(gallery.generate(), null, 2));

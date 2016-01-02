@@ -51,8 +51,12 @@ var defaultWizardData = function(imageSize)
       width: GraficUtil.pointToPixel(PageSizes.A4[0]),
       height: GraficUtil.pointToPixel(PageSizes.A4[1]),
       imagesPerPage: imagesPerPage,
+      double:true,
+      useImageAsBackground:true,
+      useCoverPage:true,
       background:{
-        image:'http://www.designbolts.com/wp-content/uploads/2013/02/Floral-Grey-Seamless-Pattern-For-Website-Background.jpg',
+        //image:'http://www.designbolts.com/wp-content/uploads/2013/02/Floral-Grey-Seamless-Pattern-For-Website-Background.jpg',
+        image:'https://static.pexels.com/photos/2463/stairs-art-yellow-architecture-large.jpg',
         size:'cover'
       },
     }

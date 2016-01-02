@@ -15,13 +15,13 @@ export default class ImageGalleryView extends React.Component
 {
   constructor(props){
     super(props);
-    this.state = {zoomFactor: 1};
+    this.state = {zoomFactor: 0.2};
   }
 
   render(){
     if (this.props.photos === undefined) return (<div>Loading...</div>);
 
-    var gallery = new ImageGallery("ImageGallery", this.props.photos, this.props.template, this.props.pageOptions);
+    var gallery = new ImageGallery(this.props.selectedAlbum.name, this.props.photos, this.props.template, this.props.pageOptions);
     var schema = gallery.generate();
     var style = {boxSizing: 'border-box', position: 'fixed', bottom: 0, right: 0, margin: 20, zIndex: 1000};
 

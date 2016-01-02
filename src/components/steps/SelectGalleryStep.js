@@ -25,12 +25,12 @@ export default class SelectImageGalleryStep extends React.Component
     render(){
         var imagesPerPageLink = Binder.bindTo(this.props.wizardData, 'pageOptions.imagesPerPage');
         var doubleLink = Binder.bindTo(this.props.wizardData, 'pageOptions.double');
+        var coverPage = Binder.bindTo(this.props.wizardData, 'pageOptions.useCoverPage');
         var useImageAsBackground = Binder.bindTo(this.props.wizardData, 'pageOptions.useImageAsBackground');
         var pageOptions = this.props.wizardData.value.pageOptions;
         var layout = Binder.bindTo(this.props.wizardData, 'template.layout.Container').value;
 
       return (<div>
-
             <div className="form-group">
                 <label>Images per page:<b>{imagesPerPageLink.value}</b></label>
                 <div>
@@ -58,6 +58,15 @@ export default class SelectImageGalleryStep extends React.Component
             <input type="checkbox"
               checked={doubleLink.value}
               onChange={(e)=>{doubleLink.value = e.target.checked}}
+            />
+          </div>
+        </div>
+        <div className="form-group">
+          <label>Cover page:<b>{coverPage.value}</b></label>
+          <div>
+            <input type="checkbox"
+                   checked={coverPage.value}
+                   onChange={(e)=>{coverPage.value = e.target.checked}}
             />
           </div>
         </div>

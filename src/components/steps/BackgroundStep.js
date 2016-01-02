@@ -30,9 +30,9 @@ export default class BackgroundStep extends React.Component {
                                       onClick={()=> { Binder.bindTo(this.props.wizardData, 'pageOptions.background').value = undefined}}></span> : null}
 
       <ul className="nav nav-tabs">
-        <li role="presentation" className={this.state.selectedIndex===0?'active':null} onClick={()=>{this.setState({selectedIndex :0})}}><a href="#">Images</a></li>
-        <li role="presentation" className={this.state.selectedIndex===1?'active':null} onClick={()=>{this.setState({selectedIndex :1})}}><a href="#">Colors</a></li>
-        <li role="presentation" className={this.state.selectedIndex===2?'active':null} onClick={()=>{this.setState({selectedIndex :2})}}><a href="#">Effects</a></li>
+        <li role="presentation" className={this.state.selectedIndex===0?'active':null} onClick={()=>{this.setState({selectedIndex :0})}}><a>Images</a></li>
+        <li role="presentation" className={this.state.selectedIndex===1?'active':null} onClick={()=>{this.setState({selectedIndex :1})}}><a>Colors</a></li>
+        <li role="presentation" className={this.state.selectedIndex===2?'active':null} onClick={()=>{this.setState({selectedIndex :2})}}><a>Effects</a></li>
       </ul>
 
 
