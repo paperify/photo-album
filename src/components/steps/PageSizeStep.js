@@ -1,5 +1,5 @@
 import React from 'react';
-import {Binder} from 'react-binding';
+import Binder from 'react-binding';
 import InputRange from 'react-input-range';
 import PageSizes from '../utils/standardPageSizes';
 import _ from 'lodash';

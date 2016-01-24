@@ -6,26 +6,27 @@ var IMAGES_PER_PAGE = 3;
 var ImageGallery = (function () {
     function ImageGallery(name, images, Template, PageOptions) {
         this.name = name;
+        this.images = images;
         this.Template = Template;
         this.PageOptions = PageOptions;
         this.ImageBoxes = [];
         this.HtmlBoxes = [];
         if (this.PageOptions === undefined)
             this.PageOptions = {};
-        this.ImagesPerPage = this.PageOptions.imagesPerPage || IMAGES_PER_PAGE;
+        this.ImagesPerPage = Template.imagesPerPage || IMAGES_PER_PAGE;
         this.ImageBoxes = images.map(function (image, index) {
-            return new ImageBox(image, Template.image);
+            return new ImageBox(image);
         });
     }
     ImageGallery.prototype.generate = function () {
-        var doublePage = this.PageOptions.double;
-        var coverPage = this.PageOptions.useCoverPage;
+        var doublePage = this.Template.double;
+        var coverPage = this.Template.useCoverPage;
         var chunkedImages = lodash_1.chunk(this.ImageBoxes, this.ImagesPerPage);
         var pages = [];
         for (var i = 0; i !== chunkedImages.length; i++) {
             var images = chunkedImages[i];
             images = images.sort(function (a, b) {
-                return a.Image.title && a.Image.title.length > b.Image.title && b.Image.title.length ? -1 : 1;
+                return a.Image.description && a.Image.description.length > b.Image.description && b.Image.description.length ? -1 : 1;
             });
             if (doublePage) {
                 pages.push(new Array(images[0]));
@@ -38,19 +39,18 @@ var ImageGallery = (function () {
         }
         ;
         var lastItem;
-        var items = this.PageOptions.useImageAsBackground ? pages.map(function (images, index) {
+        var items = this.Template.useImageAsBackground ? pages.map(function (images, index) {
             //take first image as background
             if (doublePage && index % 2 !== 0)
                 return { background: lastItem };
-            lastItem = lodash_1.merge(lodash_1.cloneDeep(this.PageOptions.background), { image: images[0].Image.url });
+            lastItem = { image: images[0].Image.url, size: 'cover', repeat: 'no-repeat' };
             return { background: lastItem };
         }, this) : [];
         if (doublePage)
             items = lodash_1.map(items, function (item, i) {
                 return {
                     background: lodash_1.extend(lodash_1.clone(item.background), {
-                        size: this.PageOptions.width * 2 + 'px ' + this.PageOptions.height + 'px',
-                        position: i % 2 === 0 ? '0% 0%' : '100% 0%'
+                        size: i % 2 === 0 ? 'leftHalf' : 'rightHalf'
                     })
                 };
             }, this);
@@ -58,19 +58,23 @@ var ImageGallery = (function () {
             name: this.name,
             elementName: "ObjectSchema",
             props: {
-                background: this.PageOptions.background
+                defaultData: {
+                    images: lodash_1.reduce(this.images, function (map, obj, index) {
+                        map[index] = obj;
+                        return map;
+                    }, {})
+                }
             },
             containers: pages.map(function (images, index) {
                 if (doublePage && index % 2 === 0)
-                    return new EmptyContainer("Page " + index, images[0].Image.title, items[index].background, this.Template, this.PageOptions);
-                return new ImageContainer(!this.PageOptions.useImageAsBackground || doublePage ? images : images.slice(1), items[index].background, this.Template, this.PageOptions);
+                    return new EmptyContainer("Page " + index, images[0].Image.description, items[index] && items[index].background, this.Template, this.PageOptions);
+                return new ImageContainer(!this.Template.useImageAsBackground || doublePage ? images : images.slice(1), items[index] && items[index].background, this.Template, this.PageOptions);
             }, this).map(function (item) {
                 return item.generate();
             })
         };
-        //if (coverPage) items.unshift({background: this.PageOptions.background});
         if (coverPage)
-            schema.containers.unshift(new EmptyContainer(this.name, this.name, this.PageOptions.background, this.Template, this.PageOptions).generate());
+            schema.containers.unshift(new EmptyContainer(this.name, this.name, undefined, this.Template, this.PageOptions).generate());
         return schema;
     };
     return ImageGallery;
@@ -85,8 +89,8 @@ var EmptyContainer = (function () {
         this.PageOptions = PageOptions;
     }
     EmptyContainer.prototype.generate = function () {
-        var titleBox = new HtmlBox(this.title, this.Template.text);
-        var desBox = new HtmlBox(this.description, this.Template.text);
+        var titleBox = new HtmlBox(this.title);
+        var desBox = new HtmlBox(this.description);
         return {
             name: "ImageContainer",
             elementName: "Container",
@@ -112,8 +116,6 @@ var ImageContainer = (function () {
         this.Template = Template;
         this.PageOptions = PageOptions;
         this.LayoutTemplate = Template.layout;
-        this.ImageTemplate = Template.image;
-        this.TextTemplate = Template.text;
         this.FlexContainer = new FlexLayout_1["default"](this.LayoutTemplate).getContainer(images.length);
     }
     ImageContainer.prototype.generate = function () {
@@ -129,8 +131,8 @@ var ImageContainer = (function () {
         }
         else {
             var input = this.FlexContainer;
-            var imageWidth = this.ImageTemplate.width;
-            var imageHeight = this.ImageTemplate.height;
+            var imageWidth = undefined;
+            var imageHeight = undefined;
             var nodeInput = {
                 //width:this.PageOptions.width,
                 //height:this.PageOptions.height,
@@ -146,10 +148,7 @@ var ImageContainer = (function () {
                 },
                 children: lodash_1.map(input.items, function (item, i) {
                     var image = this.images[i].Image;
-                    var newItem = {
-                        //position: 'relative',
-                        margin: 5
-                    };
+                    var newItem = {};
                     if (!!image.width)
                         newItem.width = imageWidth || image.width;
                     if (!!image.height)
@@ -174,52 +173,43 @@ var ImageContainer = (function () {
                 unbreakable: true,
                 background: this.background
             },
-            boxes: this.images.map(function (item, i) { return item.generate(styles[i]); }).concat(this.images.map(function (item, i) {
-                var style = styles[i];
-                return new HtmlBox(item.Image.title, this.TextTemplate).generate({ zIndex: 2, top: style.top + style.height, left: style.left, width: style.width });
-            }, this))
+            boxes: this.images.map(function (item, i) { return item.generate(styles[i]); })
         };
     };
     return ImageContainer;
 })();
 var HtmlBox = (function () {
-    function HtmlBox(description, DefaultProps) {
-        this.description = description;
-        this.DefaultProps = DefaultProps;
+    function HtmlBox(content) {
+        this.content = content;
     }
     HtmlBox.prototype.generate = function (style) {
         return {
             name: "Text",
-            elementName: "Core.HtmlBox",
+            elementName: "Core.HtmlContent",
             style: style,
-            props: lodash_1.merge({
-                content: this.description
-            }, this.DefaultProps)
+            props: {
+                content: this.content
+            }
         };
     };
     return HtmlBox;
 })();
 var ImageBox = (function () {
-    function ImageBox(Image, DefaultProps) {
+    function ImageBox(Image) {
         this.Image = Image;
-        this.DefaultProps = DefaultProps;
     }
     ImageBox.prototype.generate = function (style) {
         return {
             name: "Image",
-            elementName: "Core.ImageBox",
+            elementName: "Core.SmartImageBox",
             style: style,
-            props: lodash_1.merge({
+            props: {
                 url: this.Image.url,
-                border: {
-                    width: 1,
-                    radius: 10
-                },
-                //titlePosition:'bottom',
-                //title:this.Image.title,
+                caption: this.Image.title !== undefined && this.Image.title.length > 10 ? this.Image.title.substr(0, 10) : undefined,
+                description: this.Image.description,
                 width: this.Image.width,
                 height: this.Image.height
-            }, this.DefaultProps)
+            }
         };
     };
     return ImageBox;

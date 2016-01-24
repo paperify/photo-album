@@ -1,52 +1,54 @@
 import React from 'react';
+import Binder from 'react-binding';
 import flux from 'fluxify';
 import {ImageGallery} from '../layout/ImageGallery';
 import HtmlBookRenderer from '../page/HtmlBookRenderer';
-import ImageBox from '../widgets/ImageBox';
-import HtmlBox from '../widgets/HtmlBox';
-
 import PhotoStore from '../../stores/photoStore';
 import Brand from '../utils/brand';
-
-var Widgets = {
-  'Core.ImageBox': ImageBox,
-  'Core.HtmlBox': HtmlBox
-};
+import Widgets from '../page/WidgetFactory';
+import repeatTemplate from '../utils/repeatTemplate';
+import convertToHash from '../utils/convertToHash';
+import wizardStyles from '../utils/wizardStyles';
 
 class HtmlBook extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      selectedAlbum: PhotoStore.selectedAlbum,
+      schema: PhotoStore.schema,
       wizardData: PhotoStore.wizardData
     };
   }
 
   componentDidMount() {
     var me = this;
-    PhotoStore.on('change:selectedAlbum', function (value) {
+    PhotoStore.on('change:schema', function (value) {
       me.setState({
-        selectedAlbum: value
-        //    loaded: true
+        schema: value
       });
     });
+
   }
 
   render() {
-    var album = this.state.selectedAlbum;
-    var wizardData = this.state.wizardData;
-    var galleryName = !!album ? album.name : "ImageGallery";
+    var schema = this.state.schema;
+    if (schema === undefined) return <div>Loading...</div>;
 
-    var gallery = new ImageGallery(galleryName, album.photos, wizardData.template, wizardData.pageOptions);
-    return (<div style={{paddingBottom:10,paddingLeft:10,paddingRight:10}}><HtmlBookRenderer widgets={Widgets}
-                                                                                             schema={gallery.generate()}
-                                                                                             data={{}}
-                                                                                             pageOptions={wizardData.pageOptions}/>
+    schema = _.cloneDeep(this.state.schema);
+
+    //apply wizard styles to schema
+
+    wizardStyles(schema,this.state.wizardData && this.state.wizardData.styles);
+
+    var dataContext = Binder.bindToState(this,'schema','data');
+
+    var pageOptions = this.state.wizardData && this.state.wizardData.pageOptions;
+
+    return (<div style={{paddingBottom:10,paddingLeft:10,paddingRight:10}}>
+      <HtmlBookRenderer widgets={Widgets} schema={schema} dataContext={dataContext} pageOptions={pageOptions}/>
     </div>)
   }
-}
-;
+};
 
 export default class HtmlBookViewer extends React.Component {
   render() {

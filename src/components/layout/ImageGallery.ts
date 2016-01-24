@@ -1,4 +1,4 @@
-import {chunk,map,clone,extend,cloneDeep,merge,filter,each} from 'lodash';
+import {indexBy, reduce,chunk,map,clone,extend,cloneDeep,merge,filter,each,omit} from 'lodash';
 import FlexLayout, {IFlexContainer} from "./FlexLayout";
 import * as computeLayout from 'css-layout';
 import {IFlexLayoutTemplate} from "./FlexLayout";
@@ -15,45 +15,49 @@ interface IImage{
     url:string
     width?:number
     height?:number
-    title?:number
+    description?:string
+    title?:string
 }
 
 interface INode {
     generate(layout:any):any;
 }
-interface IPageOptions {
-    imagesPerPage?:number;
-    double?:boolean;
-    useImageAsBackground?:boolean;
-    useCoverPage?:boolean;
-
-    width?:number;
-    height?:number;
-    background?:any;
+interface ISize{
+  width?:number;
+  height?:number;
+}
+interface IPageOptions extends  ISize{
+}
+interface ITemplate{
+  imagesPerPage?:number;
+  double?:boolean;
+  useImageAsBackground?:boolean;
+  useCoverPage?:boolean;
+  layout:any;
+  image:ISize;
 }
 
 const IMAGES_PER_PAGE:number = 3;
 export class ImageGallery implements INode {
-
 
   ImagesPerPage:number;
   ImageBoxes:Array<ImageBox> = [];
   HtmlBoxes:Array<HtmlBox> = [];
 
 
-  constructor(public name:string, images:Array<IImage>, public Template:any, public PageOptions?:IPageOptions) {
+  constructor(public name:string, public images:Array<IImage>, public Template:ITemplate, public PageOptions?:IPageOptions) {
     if (this.PageOptions === undefined) this.PageOptions = {};
 
-    this.ImagesPerPage = this.PageOptions.imagesPerPage || IMAGES_PER_PAGE;
+    this.ImagesPerPage = Template.imagesPerPage || IMAGES_PER_PAGE;
     this.ImageBoxes = images.map(function (image, index) {
-      return new ImageBox(image, Template.image)
+      return new ImageBox(image)
     });
 
   }
 
   generate() {
-    var doublePage = this.PageOptions.double;
-    var coverPage = this.PageOptions.useCoverPage;
+    var doublePage = this.Template.double;
+    var coverPage = this.Template.useCoverPage;
 
     var chunkedImages = chunk(this.ImageBoxes, this.ImagesPerPage);
 
@@ -61,7 +65,7 @@ export class ImageGallery implements INode {
     for (var i = 0; i !== chunkedImages.length; i++) {
       var images = chunkedImages[i];
       images = images.sort(function (a, b) {
-        return a.Image.title && a.Image.title.length > b.Image.title && b.Image.title.length ? -1 : 1
+        return a.Image.description && a.Image.description.length > b.Image.description && b.Image.description.length ? -1 : 1
       });
       if (doublePage) {
         pages.push(new Array(images[0]));
@@ -75,10 +79,10 @@ export class ImageGallery implements INode {
 
 
     var lastItem;
-    var items = this.PageOptions.useImageAsBackground ? pages.map(function (images, index) {
+    var items = this.Template.useImageAsBackground ? pages.map(function (images, index) {
       //take first image as background
       if (doublePage && index % 2 !== 0) return {background: lastItem};
-      lastItem = merge(cloneDeep(this.PageOptions.background), {image: images[0].Image.url});
+      lastItem = {image: images[0].Image.url, size:'cover', repeat:'no-repeat'};
       return {background: lastItem}
     }, this) : [];
 
@@ -86,32 +90,32 @@ export class ImageGallery implements INode {
         return {
           background: extend(clone(item.background),
             {
-              size: this.PageOptions.width * 2 + 'px ' + this.PageOptions.height + 'px',
-              position: i % 2 === 0 ? '0% 0%' : '100% 0%'
+              size: i % 2 === 0 ? 'leftHalf' : 'rightHalf'
             }
           )
         }
       },this);
 
 
-
-
     var schema = {
       name: this.name,
       elementName: "ObjectSchema",
       props: {
-        background: this.PageOptions.background,
-        //items: items
+        defaultData: {
+          images: reduce(this.images, function (map, obj, index) {
+            map[index] = obj;
+            return map;
+          }, {}),
+        }
       },
       containers: pages.map(function (images, index) {
-        if (doublePage && index % 2 === 0) return new EmptyContainer(`Page ${index}`, images[0].Image.title, items[index].background, this.Template, this.PageOptions);
-        return new ImageContainer(!this.PageOptions.useImageAsBackground || doublePage ? images : images.slice(1),items[index].background, this.Template, this.PageOptions)
+        if (doublePage && index % 2 === 0) return new EmptyContainer(`Page ${index}`, images[0].Image.description, items[index] && items[index].background, this.Template, this.PageOptions);
+        return new ImageContainer(!this.Template.useImageAsBackground || doublePage ? images : images.slice(1), items[index] && items[index].background, this.Template, this.PageOptions)
       }, this).map(function (item) {
         return item.generate()
       })
     };
-    //if (coverPage) items.unshift({background: this.PageOptions.background});
-    if (coverPage) schema.containers.unshift(new EmptyContainer(this.name, this.name, this.PageOptions.background,this.Template, this.PageOptions).generate());
+    if (coverPage) schema.containers.unshift(new EmptyContainer(this.name, this.name, undefined,this.Template, this.PageOptions).generate());
 
 
     return schema;
@@ -125,8 +129,8 @@ class EmptyContainer{
 
   }
   generate() {
-    var titleBox = new HtmlBox(this.title,this.Template.text);
-    var desBox = new HtmlBox(this.description,this.Template.text);
+    var titleBox = new HtmlBox(this.title);
+    var desBox = new HtmlBox(this.description);
     return {
       name: "ImageContainer",
       elementName: "Container",
@@ -149,16 +153,10 @@ class EmptyContainer{
 class ImageContainer{
     public FlexContainer:IFlexContainer;
     LayoutTemplate:IFlexLayoutTemplate;
-    ImageTemplate:any;
-    TextTemplate:any;
 
     constructor (private images:Array<ImageBox>,private background:any, public Template, public PageOptions:any)
     {
       this.LayoutTemplate = Template.layout;
-      this.ImageTemplate = Template.image;
-      this.TextTemplate = Template.text;
-
-
       this.FlexContainer = new FlexLayout(this.LayoutTemplate).getContainer(images.length);
     }
 
@@ -176,8 +174,8 @@ class ImageContainer{
       }
       else {
         var input = this.FlexContainer;
-        var imageWidth = this.ImageTemplate.width;
-        var imageHeight = this.ImageTemplate.height;
+        var imageWidth = undefined;
+        var imageHeight = undefined;
         var nodeInput = {
           //width:this.PageOptions.width,
           //height:this.PageOptions.height,
@@ -195,7 +193,7 @@ class ImageContainer{
             var image = this.images[i].Image;
             var newItem:any = {
                 //position: 'relative',
-              margin: 5
+              //margin: 5
             };
             if (!!image.width) newItem.width = imageWidth || image.width;
             if (!!image.height) newItem.height = imageHeight || image.height;
@@ -223,51 +221,43 @@ class ImageContainer{
                 unbreakable:true,
                 background:this.background
             },
-            boxes:this.images.map(function(item:INode,i:number){return item.generate(styles[i])}).concat(
-              this.images.map(function(item,i:number){
-                var style = styles[i];
-                return new HtmlBox(item.Image.title,this.TextTemplate).generate({zIndex:2,top:style.top + style.height,left:style.left,width:style.width})},this)
-            )
+            boxes:this.images.map(function(item:INode,i:number){return item.generate(styles[i])})
         }
     }
 }
 class HtmlBox implements INode {
-  constructor (public description:string, public DefaultProps:any){
+  constructor (public content:string){
 
   }
   generate(style:any){
     return {
       name: "Text",
-      elementName: "Core.HtmlBox",
+      elementName: "Core.HtmlContent",
       style: style,
-      props: merge({
-        content: this.description,
-      },this.DefaultProps)
+      props: {
+        content: this.content,
+      }
     }
   }
 }
 
 class ImageBox implements INode {
-    constructor (public Image:IImage, public DefaultProps:any){
+    constructor (public Image:IImage){
 
     }
     generate(style:any){
         return {
             name: "Image",
-            elementName: "Core.ImageBox",
+            elementName: "Core.SmartImageBox",
             style: style,
-            props: merge({
-                url: this.Image.url,
-                border:{
-                    width:1,
-                    radius:10
-                },
-                //titlePosition:'bottom',
-                //title:this.Image.title,
-                width:this.Image.width,
-                height:this.Image.height,
-                //clipPath:'polygon(0% 15%, 15% 15%, 15% 0%, 85% 0%, 85% 15%, 100% 15%, 100% 85%, 85% 85%, 85% 100%, 15% 100%, 15% 85%, 0% 85%)'
-            },this.DefaultProps)
+            props: {
+              url: this.Image.url,
+              caption: this.Image.title !== undefined && this.Image.title.length > 10 ? this.Image.title.substr(0, 10) : undefined,
+              description: this.Image.description,
+              width: this.Image.width,
+              height: this.Image.height
+              //clipPath:'polygon(0% 15%, 15% 15%, 15% 0%, 85% 0%, 85% 15%, 100% 15%, 100% 85%, 85% 85%, 85% 100%, 15% 100%, 15% 85%, 0% 85%)'
+            }
         }
     }
 }

@@ -3,16 +3,16 @@ import GraficUtil from './graphicUtil';
 
 const DEFAULT_FLEX_ITEM:IFlexItem = {
   order: 0,
-  flexGrow: 0,
-  flexShrink: 0,
-  flexBasis: 'flex-start',
+  flexGrow: 1,
+  flexShrink: 1,
+  flexBasis: 'auto',
   alignSelf: 'flex-start'
 };
 const DEFAULT_FLEX_CONTAINER:IFlexContainerTemplate = {
   flexDirection: 'row',
   flexWrap: 'wrap',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
+  alignItems: 'stretch',
   alignContent: 'stretch'
 };
 
@@ -24,41 +24,37 @@ var defaultWizardData = function(imageSize)
   if (imageSize === 'mini') imagesPerPage = 58;
   return {
     imageSize: imageSize,
+    templateName:'WordsAndImages',
     template: {
+      imagesPerPage: imagesPerPage,
+      double:true,
+      useImageAsBackground:true,
+      useCoverPage:true,
       layout: {
         Container: DEFAULT_FLEX_CONTAINER,
         Item: DEFAULT_FLEX_ITEM
       },
       image:{
+
+      }
+    },
+    styles:{
+      //background:{
+      //  image:'https://static.pexels.com/photos/8703/sky-space-moon-outdoors.jpg',
+      //  size:'cover'
+      //},
+      image:{
         border:{
-          width:0,
-          radius:0,
-          color:'#000000',
-          style:'solid'
         }
       },
       text:{
         font: {
-          fontFamily: 'Courgette',
-          fontSize: 20,
-          color: '#ffffff',
-          bold: true,
-          italic: true
         }
       }
     },
     pageOptions: {
       width: GraficUtil.pointToPixel(PageSizes.A4[0]),
-      height: GraficUtil.pointToPixel(PageSizes.A4[1]),
-      imagesPerPage: imagesPerPage,
-      double:true,
-      useImageAsBackground:true,
-      useCoverPage:true,
-      background:{
-        //image:'http://www.designbolts.com/wp-content/uploads/2013/02/Floral-Grey-Seamless-Pattern-For-Website-Background.jpg',
-        image:'https://static.pexels.com/photos/2463/stairs-art-yellow-architecture-large.jpg',
-        size:'cover'
-      },
+      height: GraficUtil.pointToPixel(PageSizes.A4[1])
     }
   }
 };

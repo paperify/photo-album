@@ -92,7 +92,7 @@ export default class SplashScreen extends React.Component {
         //    loaded: true
       });
 
-      me.context.history.pushState(null, '/htmlBook');
+      me.context.history.pushState(null, '/wizard');
     });
 
   }

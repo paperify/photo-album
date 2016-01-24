@@ -1,23 +1,20 @@
 import React from 'react';
 import _ from 'lodash';
-import GraphicPrimitive from '../utils/graphicUtil.js';
+import backgroundStyle from './utils/backgroundStyle';
 
 export default class HtmlPage extends React.Component
 {
     render() {
         var options = this.props.pageOptions;
-
-        var pageSize =  GraphicPrimitive.DefaultPageSize;
-        if (options !== undefined && options.height && options.width) {
-            pageSize = [options.width, options.height];
-        }
+        var pageSize = [options.width, options.height];
+		
         //TODO: implement other sizes
         //else {
         //	paper.format = options.format || 'A4'
         //	paper.orientation = options.orientation || 'portrait'
         //}
 
-        var defaultMargin = GraphicPrimitive.DefaultMargin;
+        var defaultMargin = 0;
 
         var margins = [defaultMargin, defaultMargin, defaultMargin, defaultMargin];
 
@@ -54,30 +51,11 @@ export default class HtmlPage extends React.Component
         //console.log("InnerStyle: " + JSON.stringify(pageInnerStyle,null,2));
         //console.log("PageStyle: " +  JSON.stringify(pageStyle,null,2));
 
-        var bgStyle = _.clone(pageStyle);
-        var bg = this.props.background;
-        if (!!bg.color) bgStyle.backgroundColor = bg.color;
-        if (!!bg.image) bgStyle.backgroundImage = 'url(' + bg.image + ')';
-        if (!!bg.position) bgStyle.backgroundPosition = bg.position;
-        if (!!bg.repeat) bgStyle.backgroundRepeat = bg.repeat;
-         if (!!bg.size) bgStyle.backgroundSize = bg.size;
-        if (!!bg.attachment) bgStyle.backgroundAttachment = bg.attachment;
+      var bgStyle = _.clone(pageStyle);
+      var bg = this.props.background;
+      if (bg !== undefined) bgStyle = _.extend(bgStyle,backgroundStyle(bg,pageStyle));
+      bgStyle.position = 'absolute';
 
-        var filter = bg.filter || {};
-        var cssFilter = "";
-        if (!!filter.blur) cssFilter += ' blur(' +  filter.blur +  'px)';
-        if (!!filter.brightness) cssFilter += ' brightness(' +  filter.brightness +  '%)';
-        if (!!filter.contrast) cssFilter += ' contrast(' +  filter.contrast +  '%)';
-        if (!!filter.grayscale) cssFilter += ' grayscale(' +  filter.grayscale +  '%)';
-        if (!!filter.hueRotate) cssFilter += ' hue-rotate(' +  filter.hueRotate +  'deg)';
-        if (!!filter.invert) cssFilter += ' invert(' +  filter.invert +  '%)';
-        if (!!filter.opacity) cssFilter += ' opacity(' +  filter.opacity +  '%)';
-        if (!!filter.saturate) cssFilter += ' saturate(' +  filter.saturate +  '%)';
-        if (!!filter.sepia) cssFilter += ' sepia(' +  filter.sepia +  '%)';
-
-        bgStyle.WebkitFilter = cssFilter;
-        bgStyle.filter = cssFilter;
-        bgStyle.position = 'absolute';
 
 
       //var imgStyle = {};

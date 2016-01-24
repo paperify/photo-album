@@ -1,17 +1,19 @@
 import React from 'react';
 import {ImageGallery} from '../layout/ImageGallery';
-import {Binder} from 'react-binding';
+import Binder from 'react-binding';
 import _ from 'lodash';
 import SplitPane from 'react-split-pane';
 import flux from 'fluxify';
 
 //steps
-import SelectGalleryStep from '../steps/SelectGalleryStep';
+import SelectGalleryStep from '../steps/TemplateStep';
 import PageSizeStep from '../steps/PageSizeStep';
 import BackgroundStep from '../steps/BackgroundStep';
 import PageLayoutStep from '../steps/PageLayoutStep';
 import SummaryStep from '../steps/SummaryStep';
 import ImageStep from '../steps/ImageStep';
+import TextStep from '../steps/TextStep';
+import PhotoStep from '../steps/PhotoStep';
 
 //stores
 import PhotoStore from '../../stores/photoStore';
@@ -22,6 +24,9 @@ import ImageGalleryView from '../page/ImageGalleryView';
 import WizardData from '../utils/wizardData';
 
 import Brand from '../utils/brand';
+
+import {toData} from '../utils/repeatTemplate';
+
 
 const stepsLength = 5;
 
@@ -46,9 +51,11 @@ export default class Wizard extends React.Component {
     super(props);
 
     this.state = {
-      selectedAlbum: PhotoStore.selectedAlbum,
+      //selectedAlbum: PhotoStore.selectedAlbum,
       loaded: false,
       wizardData: PhotoStore.wizardData,
+      schema: PhotoStore.schema,
+      selectedAlbum: PhotoStore.selectedAlbum,
       compState: 0,
       navState: getNavStates(0, stepsLength)
     };
@@ -77,14 +84,6 @@ export default class Wizard extends React.Component {
     }
   }
 
-
-  createSchema() {
-    var galleryName = !!this.state.selectedAlbum ? this.state.selectedAlbum.name : "ImageGallery";
-    var gallery = new ImageGallery(galleryName, this.state.selectedAlbum.photos, this.state.wizardData.template, this.state.wizardData.pageOptions);
-    return gallery.generate();
-
-  }
-
   generatePdf() {
     flux.doAction('generateAlbum', this.state.selectedAlbum, this.state.wizardData, 'pdf');
   }
@@ -92,32 +91,45 @@ export default class Wizard extends React.Component {
   componentDidMount() {
     var me = this;
 
-    PhotoStore.on('change:selectedAlbum', function (value) {
+    PhotoStore.on('change:schema', function (value) {
       me.setState({
-        selectedAlbum: value
-        //    loaded: true
+        schema: value
       });
     });
 
-
+    PhotoStore.on('change:wizardData', function (value) {
+      me.setState({
+        wizardData: value
+      });
+    });
   }
 
   render() {
+    if (this.state.schema === undefined) return <div>Loading...</div>;
+
+    var data = toData(this.state.wizardData.photos, 14);
+
+    var dataContext = Binder.bindToState({state:{data:data}},'data');
     var wizardData = Binder.bindToState(this, 'wizardData');
+
     var steps = [
       {name: 'Layout', component: <SelectGalleryStep wizardData={wizardData}/>},
+      {name: 'Photos', component: <PhotoStep wizardData={wizardData} />},
       //{name: 'Page size', component: <PageSizeStep wizardData={wizardData}/>},
       {name: 'Background', component: <BackgroundStep wizardData={wizardData}/>},
       //{name: 'Layout', component: <PageLayoutStep wizardData={wizardData}/>},
       {name: 'Image', component: <ImageStep wizardData={wizardData}/>},
+      {name: 'Text', component: <TextStep wizardData={wizardData}/>},
       {name: 'Finish', component: <SummaryStep wizardData={wizardData} album={this.state.selectedAlbum}/>}
     ];
+
 
     return (
       <div>
         <SplitPane split="horizontal" defaultSize={70} minSize="50">
 
           <table style={{width:'100%'}}>
+            <tbody>
             <tr>
               <td style={{paddingLeft:20}}>
                 <Brand />
@@ -139,14 +151,14 @@ export default class Wizard extends React.Component {
               <td>{!!this.state.selectedAlbum ? this.state.selectedAlbum.name : 'No album selected'}</td>
               <td><a href="#/htmlBook"><span className="glyphicon glyphicon-blackboard" aria-hidden="true"></span></a></td>
             </tr>
+            </tbody>
           </table>
 
           <SplitPane split="vertical" defaultSize={350} minSize="200">
             <div style={{margin:10}}>{steps[this.state.compState].component}</div>
-            <div style={{margin:5}}>{this.state.selectedAlbum === undefined ? "No album selected" :
-              <ImageGalleryView selectedAlbum={this.state.selectedAlbum} pageOptions={this.state.wizardData.pageOptions}
-                                template={this.state.wizardData.template}
-                                photos={this.state.selectedAlbum.photos}/>}</div>
+            <div style={{margin:5}}>{this.state.schema === undefined ? "No album selected" :
+              <ImageGalleryView schema={this.state.schema} pageOptions={this.state.wizardData.pageOptions}
+                                wizardData={this.state.wizardData} dataContext={dataContext} />}</div>
           </SplitPane>
         </SplitPane>
       </div>

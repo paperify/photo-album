@@ -2,29 +2,40 @@ import React from 'react';
 import _ from 'lodash';
 
 import HtmlPage from './HtmlPage.js';
-import WidgetRenderer from './WidgetStyleRenderer.js';
-
-import GraphicPrimitive from '../utils/graphicUtil.js';
-import transformToPages from '../utils/transformToPages';
-
+import WidgetRenderer from './WidgetRenderer';
+//import WidgetRenderer from './WidgetStyleRenderer';
+import transformToPages from './utils/transformToPages';
 
 export default class HtmlPagesRenderer extends React.Component
 {
 	render () {
 		var pageOptions =this.props.pageOptions || {};
-		var pageHeight = pageOptions.height || GraphicPrimitive.DefaultPageSize[1];
+		var pageHeight = pageOptions.height;
 		var pageMargin = pageOptions.margin || {};
 		if (pageMargin.top !== undefined) pageHeight -=pageMargin.top;
 		if (pageMargin.bottom !== undefined) pageHeight -=pageMargin.bottom;
 
 		var pages = this.props.pages;
-		if (pages === undefined) pages = transformToPages(this.props.schema,GraphicPrimitive.pointToPixel(pageHeight));
+		if (pages === undefined) pages = transformToPages(this.props.schema,pageHeight);
 		var ctx = (this.props.schema.props && this.props.schema.props.context) || {};
 		var customStyles = ctx['styles'] || {};
 
+		var code = ctx['code'] && ctx['code'].code;
+
+		var customCode = !!code ? new Function(code)() : undefined;
+
+		var dataContext = this.props.dataContext;
+		//append shared code to data context
+		if (dataContext !== undefined) dataContext.customCode = customCode;
+
 		var pageBackground = (this.props.schema.props && this.props.schema.props.background) || {};
     //var items = (this.props.schema.props && this.props.schema.props.items) || [];
-    var items = this.props.schema.containers.map(function(container,i){return {background: (container.props && container.props.background) || pageBackground}});
+    var items = this.props.schema.containers.map(function(container,i){
+		var conProps = container.props;
+		var conBindings = container.bindings;
+		if (conBindings !== undefined && dataContext !== undefined) conProps = WidgetRenderer.bindProps(conProps,conBindings,dataContext);
+		return {background: (conProps && conProps.background) || pageBackground}
+	},this);
     var normalizeBackgrounds = _.map(items,function(item){return item.background}).concat(_.map(_.range(0,pages.length - items.length),function(){return pageBackground}));
 
 		return (
@@ -34,8 +45,8 @@ export default class HtmlPagesRenderer extends React.Component
 					return (<HtmlPage key={'page' + i} position={i} pageNumber={page.pageNumber} widgets={this.props.widgets} background={back} pageOptions={this.props.pageOptions}>
 						{page.boxes.map(function (node, j) {
 							var elName = node.element.elementName;
-							var widget = <WidgetRenderer key={'page' + i + '_' + j} widget={this.props.widgets[elName]} widgetProps={node.element.props}
-														 customStyle={customStyles[elName]} />;
+							var widget = <WidgetRenderer key={'page' + i + '_' + j} widget={this.props.widgets[elName]} node={node.element}
+														 customStyle={customStyles[elName]} dataBinder={dataContext} />;
 							return (
 								<div key={'item' + j} style={ node.style}>
 									<div id={node.element.name}>{widget}</div>

@@ -2,6 +2,7 @@ require('normalize.css');
 require('styles/App.css');
 require('styles/react-input-range.css');
 require('styles/prog-tracker.css');
+require('styles/article-image-box.css');
 
 import React from 'react';
 import { Router, Route, Link } from 'react-router'

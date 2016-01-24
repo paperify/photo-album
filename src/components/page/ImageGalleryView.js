@@ -1,30 +1,35 @@
 
 import React from 'react';
-import HtmlPagesRenderer from './HtmlPagesRenderer';
-import {ImageGallery} from '../layout/ImageGallery';
-import BindToMixin from 'react-binding';
-import ImageBox from '../widgets/ImageBox';
-import HtmlBox from '../widgets/HtmlBox';
+import Binder from 'react-binding';
 
-var Widgets = {
-  'Core.ImageBox':ImageBox,
-  'Core.HtmlBox':HtmlBox
-};
+import Widgets from './WidgetFactory';
+import HtmlPagesRenderer from '../renderer/HtmlPagesRenderer';
+import {ImageGallery} from '../layout/ImageGallery';
+import templateRepeater from '../utils/repeatTemplate';
+import convertToHash from '../utils/convertToHash';
+import PhotoStore from '../../stores/photoStore';
+import wizardStyles from '../utils/wizardStyles';
 
 export default class ImageGalleryView extends React.Component
 {
   constructor(props){
     super(props);
-    this.state = {zoomFactor: 0.2};
+    this.state = {
+      zoomFactor: 0.2
+    };
   }
 
   render(){
-    if (this.props.photos === undefined) return (<div>Loading...</div>);
+    if (this.props.schema === undefined) return (<div>Loading...</div>);
 
-    var gallery = new ImageGallery(this.props.selectedAlbum.name, this.props.photos, this.props.template, this.props.pageOptions);
-    var schema = gallery.generate();
+    var schema = _.cloneDeep(this.props.schema);
+
+
+    //apply wizard styles to schema
+     wizardStyles(schema, this.props.wizardData && this.props.wizardData.styles);
+
+
     var style = {boxSizing: 'border-box', position: 'fixed', bottom: 0, right: 0, margin: 20, zIndex: 1000};
-
     var buttonStyle = {
       width: 55,
       height: 55,
@@ -48,7 +53,7 @@ export default class ImageGalleryView extends React.Component
           </div>
         </div>
         <div style={{zoom:this.state.zoomFactor}}>
-          <HtmlPagesRenderer style={{display:'flex',flexWrap:'wrap'}} widgets={Widgets} schema={schema} data={{}}
+          <HtmlPagesRenderer style={{display:'flex',flexWrap:'wrap'}} widgets={Widgets} schema={schema} dataContext={this.props.dataContext}
                              pageOptions={this.props.pageOptions}/>
         </div>
       </div>);

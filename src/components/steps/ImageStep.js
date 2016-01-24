@@ -1,38 +1,25 @@
 import React from 'react';
-import {Binder} from 'react-binding';
+import Binder from 'react-binding';
 import InputRange from 'react-input-range';
 import ResetButton from '../controls/ResetButton';
-import ColorPicker from 'react-color';
+import ColorPicker from 'react-colors-picker';
+import flux from 'fluxify';
 
-const popupPosition = {
-  position: 'relative',
-  top: '0px',
-  left: '0px',
-};
+const DEFAULT_COLOR = "#ff0a0a";
+
 export default class ImageStep extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      displayColorPicker: false
-    };
-    this.handleClick = this.handleClick.bind(this);
-  }
-  handleClick() {
-    this.setState({ displayColorPicker: !this.state.displayColorPicker });
-  }
   changeProp(prop, propValue) {
-    Binder.bindTo(Binder.bindTo(this.props.wizardData, 'template.image'), prop).value = propValue;
+    Binder.bindTo(Binder.bindTo(this.props.wizardData, 'styles.image'), prop).value = propValue;
   }
-
   render() {
-    var image = Binder.bindTo(this.props.wizardData, 'template.image').value;
+    var image = Binder.bindTo(this.props.wizardData, 'styles.image');
 
     var imageWidth = Binder.bindTo(this.props.wizardData, 'template.image.width');
     var imageHeight = Binder.bindTo(this.props.wizardData, 'template.image.height');
 
-    var borderWidth = Binder.bindTo(this.props.wizardData, 'template.image.border.width');
-    var borderRadius = Binder.bindTo(this.props.wizardData, 'template.image.border.radius');
-    var borderColor = Binder.bindTo(this.props.wizardData, 'template.image.border.color');
+    var borderWidth = Binder.bindTo(image, 'border.width');
+    var borderRadius = Binder.bindTo(image, 'border.radius');
+    var borderColor = Binder.bindTo(image, 'border.color');
     return (<div>
 
       <div className="form-group">
@@ -44,7 +31,10 @@ export default class ImageStep extends React.Component {
             maxValue={1000}
             minValue={0}
             value={imageWidth.value || 0}
-            onChange={(comp, value)=>{imageWidth.value = value}}
+            onChange={(comp, value)=>{
+              imageWidth.value = value;
+              flux.doAction('changeTemplate');
+            }}
           />
         </div>
       </div>
@@ -57,12 +47,15 @@ export default class ImageStep extends React.Component {
             maxValue={1000}
             minValue={0}
             value={imageHeight.value || 0}
-            onChange={(comp, value)=>{imageHeight.value = value}}
+            onChange={(comp, value)=>{
+              imageHeight.value = value;
+              flux.doAction('changeTemplate');
+            }}
           />
         </div>
       </div>
       <div className="form-group">
-        <label>objectFit:<b>{image.objectFit}</b></label>
+        <label>objectFit:<b>{image.value && image.value.objectFit}</b></label>
         <div>
           <div className="btn-group" role="group" aria-label="...">
             <button type="button" className="btn btn-primary" onClick={()=>this.changeProp('objectFit','cover')}>cover
@@ -109,13 +102,12 @@ export default class ImageStep extends React.Component {
 
       <div className="form-group">
         <label>Color:</label><ResetButton item={borderColor}/>
-        <div style={{border:'1px solid black',width:100,height:25,backgroundColor:image.border.color}} onClick={this.handleClick}>
-
-        </div>
-
         <div>
-          <ColorPicker positionCSS={popupPosition} display={this.state.displayColorPicker} color={borderColor.value}
-                       onChange={(value)=>{borderColor.value = "#" + value.hex}} type="sketch"/>
+          <ColorPicker animation="slide-up"
+                       color={(borderColor.value && borderColor.value.color) || DEFAULT_COLOR}
+                       alpha={(borderColor.value && borderColor.value.alpha)}
+                       onChange={(value)=>{borderColor.value = value}}/>
+
         </div>
       </div>
 

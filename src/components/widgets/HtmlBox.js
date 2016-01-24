@@ -1,14 +1,48 @@
 import React from 'react';
-import styleFont from '../utils/font';
+import _ from 'lodash';
 
-export default class HtmlBox extends React.Component{
-  render() {
-    //experimental - columnCount, counterReset
-    var style = styleFont(this.props.font);
-    if (this.props.columnCount !== undefined) style.WebkitColumnCount=this.props.columnCount;
-    if (this.props.counterReset !== undefined) style.counterReset = 'item ' + (this.props.counterReset - 1);
-    return (
-      <div className="nestedList" style={style} dangerouslySetInnerHTML={{__html: this.props.content}}></div>
-    );
-  }
+import styleFont from './utils/font';
+import styleBorder from './utils/border';
+import backgroundStyle from './utils/backgroundStyle';
+
+import HtmlContent from './HtmlContent';
+
+let Box = (props) => {
+
+	var style = {};
+	
+	//size
+	if (!!props.height)  style.height = props.height;
+	if (!!props.width) style.width = props.width;
+	
+	//text style
+	var pStyle = {position :'relative'};
+	
+	var size = props.padding || {};
+	pStyle.paddingTop = size.top;
+	pStyle.paddingRight = size.right;
+	pStyle.paddingBottom = size.bottom;
+	pStyle.paddingLeft = size.left;
+	
+	//background style
+	var bgStyle = {width: '100%', height: '100%', position: 'absolute'};
+	if (props.background !== undefined) bgStyle = _.extend(bgStyle, backgroundStyle(props.background));
+
+	//border
+	styleBorder(bgStyle,props.border);
+	
+	//clipPath
+	if (!!props.clipPath) {
+		bgStyle.clipPath = props.clipPath;
+		bgStyle.WebkitClipPath = props.clipPath;
+	}
+	
+	return (
+		<div style={style}>
+			<div style={bgStyle}></div>
+			<HtmlContent style={pStyle} content={props.content} font={props.font} />
+		</div>)
 }
+Box.defaultProps = {content: 'type your content'};
+export default Box;
+

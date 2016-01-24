@@ -1,38 +1,27 @@
 import React from 'react';
+import styleBorder from './utils/border';
 
-export default class ImageBox extends React.Component{
-  render() {
-    var style = {};
+let ImageBox = (props) => {
+	var style = {};
 
-    //border
-    var border = this.props.border || {};
-    if (border.width) style.borderWidth = border.width;
-    if (border.radius) style.borderRadius = border.radius;
-    if (border.color) style.borderColor = border.color;
-    if (border.style) style.borderStyle = border.style;
+	//size
+	if (!!props.height) style.height = props.height;
+	if (!!props.width) style.width = props.width;
+	if (!!props.minWidth) style.minWidth = props.minWidth;
+	if (!!props.minHeight) style.minHeight = props.minHeight;
 
-    //size
-    if (this.props.height) style.height = this.props.height;
-    if (this.props.width) style.width = this.props.width;
+	//border
+	styleBorder(style, props.border);
+	
+	if (props.objectFit) style.objectFit = props.objectFit || 'fill';
+	if (props.clipPath) {
+		style.clipPath = props.clipPath;
+		style.WebkitClipPath = props.clipPath;
+	}
+	if (!!props.flexGrow) style.flexGrow = props.flexGrow;
 
-    if (this.props.objectFit) style.objectFit = this.props.objectFit || 'fill';
-    if (this.props.clipPath) {
-      style.clipPath = this.props.clipPath;
-      style.WebkitClipPath = this.props.clipPath;
-    }
-
-    var titleStyle = {
-      color:'white',
-      position:'relative',
-      margin:5,
-      fontWeight:'bold'
-    };
-    return (
-      <div>
-        {(this.props.titlePosition && this.props.titlePosition === 'top')?<span style={_.extend(titleStyle,{top:20})}>{this.props.title}</span>:null}
-        <img src={this.props.url} style={style} />
-        {(this.props.titlePosition && this.props.titlePosition === 'bottom')?<span style={_.extend(titleStyle,{top:-20})}>{this.props.title}</span>:null}
-      </div>
-    )
-  }
+	return <img src={props.url} style={style}/>
 }
+const DEFAULT_IMAGE_URL = "data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
+ImageBox.defaultProps = {url:DEFAULT_IMAGE_URL,minWidth:100,minHeight:100};
+export default ImageBox;

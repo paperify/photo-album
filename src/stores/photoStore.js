@@ -4,6 +4,10 @@ import _ from 'lodash';
 import WizardData from '../components/utils/wizardData';
 import GraphicUtil from '../components/utils/graphicUtil';
 import { createHashHistory } from 'history';
+import {toSchema} from '../components/utils/repeatTemplate';
+
+var WordsAndImages = require("json!./templates/Words and images.json");
+var WordsAndImages2 = require("json!./templates/Words and images 2.json");
 
 //const history = createHistory();
 //console.log(browserHistory);
@@ -23,6 +27,7 @@ var reloadAlbum = function (url, imageSize, successCallback) {
     jsonpCallback: 'picasaCallback',
     success: function (data) {
       var photos = [];
+      var counter = 0;
       $.each(data.feed.entry, function () {
 
         var newImage;
@@ -45,9 +50,11 @@ var reloadAlbum = function (url, imageSize, successCallback) {
           }
           newImage = this.media$group.media$thumbnail[size];
         }
-        var title = this.media$group.media$description.$t;
+        var desc = this.media$group.media$description.$t;
+        var title = this.media$group.media$title.$t;
+        var thumbnail =  this.media$group.media$thumbnail[1].url;
 
-        if (!!title) newImage =  _.extend(newImage,{title:title});
+        if (!!title) newImage =  _.extend(newImage,{id:counter++,description:desc,thumbnailUrl:thumbnail, title:title.substr(0,title.indexOf('.'))});
         photos.push(newImage);
 
       });
@@ -58,12 +65,26 @@ var reloadAlbum = function (url, imageSize, successCallback) {
     }
   })
 }
+var getSchema = function(templateName, photos, coverPage){
+  var template = _.cloneDeep(photoStore.templates[templateName]);
+  return toSchema(template,photos,coverPage);
+};
+var generateSchema = function(photos,wizardData){
+  var gallery = new ImageGallery("ImageGallery",photos, wizardData.template, wizardData.pageOptions);
+  return gallery.generate();
+}
+
 var i=0;
 var photoStore = flux.createStore({
   id: 'photoStore',
   initialState: {
     wizardData: WizardData.default,
-    history:history
+    history:history,
+    templates:{
+      WordsAndImages:WordsAndImages,
+      WordsAndImages2:WordsAndImages2
+    },
+    templateName:'WordsAndImages'
   },
   actionCallbacks: {
     userLoaded: function (updater, currentUser) {
@@ -103,19 +124,39 @@ var photoStore = flux.createStore({
       //console.log(currentUser);
 
     },
+
     selectAlbum: function (updater, album) {
+      var templateKey = photoStore.templateName;
+      var wizardData = photoStore.wizardData;
+
       reloadAlbum(album.url, 'original', (photos) => {
+        wizardData.photos = photos;
         updater.set({
           selectedAlbum: _.extend(_.clone(album), {photos: photos}),
-          albumChanged:++i
+          wizardData: wizardData,
+          schema:templateKey === "None"?generateSchema(photos,wizardData): getSchema(templateKey, photos,wizardData.template && wizardData.template.useCoverPage)
         })
       });
     },
-    changeImageSize: function (updater, imageSize) {
+    changeTemplate: function (updater,templateKey ) {
+      if (templateKey === undefined) templateKey = photoStore.templateName || "None";
+
       var album = photoStore.selectedAlbum;
+      var wizardData = photoStore.wizardData;
+      updater.set({
+        templateName:templateKey,
+        schema: templateKey === "None"?generateSchema(album.photos,wizardData): getSchema(templateKey, album.photos, wizardData.template && wizardData.template.useCoverPage)
+      })
+    },
+    changeImageSize: function (updater, imageSize) {
+      var templateKey = photoStore.templateName;
+      var wizardData = photoStore.wizardData;
+      var album = photoStore.selectedAlbum;
+
       reloadAlbum(album.url, imageSize, (photos) => {
         updater.set({
-          selectedAlbum: _.extend(_.clone(album), {photos: photos})
+          selectedAlbum: _.extend(_.clone(album), {photos: photos}),
+          schema:templateKey === "None"?generateSchema(photos,wizardData): getSchema(templateKey, photos,wizardData.template && wizardData.template.useCoverPage)
         })
       });
     },
@@ -192,6 +233,9 @@ var photoStore = flux.createStore({
           pageOptions: pageOptions
         })));
       });
+    },
+    loadTemplate:function(updater){
+
     }
   }
 });

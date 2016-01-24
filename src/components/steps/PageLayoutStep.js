@@ -1,5 +1,5 @@
 import React from 'react';
-import {Binder} from 'react-binding';
+import Binder from 'react-binding';
 import PageSizes from '../utils/standardPageSizes';
 
 export default class PageLayoutStep extends React.Component
