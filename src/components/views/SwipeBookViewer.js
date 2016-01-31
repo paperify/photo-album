@@ -107,9 +107,6 @@ export default class HtmlBookViewer extends React.Component {
                   <a href="#/wizard"><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
                 </li>
                 <li>
-                  <a href="#/book"><span className="glyphicon glyphicon-share" aria-hidden="true"></span></a>
-                </li>
-                <li>
                   <a onClick={()=>{flux.doAction('generateAlbum',"pdf")}} ><span className="glyphicon glyphicon-print" aria-hidden="true"></span></a>
                 </li>
               </ul>

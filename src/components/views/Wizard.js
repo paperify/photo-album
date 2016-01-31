@@ -2,7 +2,7 @@ import React from 'react';
 import {ImageGallery} from '../layout/ImageGallery';
 import Binder from 'react-binding';
 import _ from 'lodash';
-import SplitPane from 'react-split-pane';
+//import SplitPane from 'react-split-pane';
 import flux from 'fluxify';
 
 //steps
@@ -28,7 +28,7 @@ import Brand from '../utils/brand';
 import {toData} from '../utils/repeatTemplate';
 
 
-const stepsLength = 5;
+const stepsLength = 6;
 
 function getNavStates(indx, length) {
   let styles = []
@@ -68,13 +68,13 @@ export default class Wizard extends React.Component {
     }
   }
 
-  handleOnClick(evt) {
-    if (evt.target.value === stepsLength - 1 &&
+  handleOnClick(i) {
+    if (i === stepsLength - 1 &&
       this.state.compState === stepsLength - 1) {
       this.setNavState(stepsLength);
     }
     else {
-      this.setNavState(evt.target.value);
+      this.setNavState(i);
     }
   }
 
@@ -85,7 +85,7 @@ export default class Wizard extends React.Component {
   }
 
   generatePdf() {
-    flux.doAction('generateAlbum', this.state.selectedAlbum, this.state.wizardData, 'pdf');
+    flux.doAction('generateAlbum','pdf');
   }
 
   componentDidMount() {
@@ -107,14 +107,14 @@ export default class Wizard extends React.Component {
   render() {
     if (this.state.schema === undefined) return <div>Loading...</div>;
 
-    var data = toData(this.state.schema,this.state.wizardData.photos);
+    var data = toData(this.state.schema, this.state.wizardData.photos);
 
-    var dataContext = Binder.bindToState({state:{data:data}},'data');
+    var dataContext = Binder.bindToState({state: {data: data}}, 'data');
     var wizardData = Binder.bindToState(this, 'wizardData');
 
     var steps = [
       {name: 'Layout', component: <SelectGalleryStep wizardData={wizardData}/>},
-      {name: 'Photos', component: <PhotoStep wizardData={wizardData} />},
+      {name: 'Photos', component: <PhotoStep wizardData={wizardData}/>},
       //{name: 'Page size', component: <PageSizeStep wizardData={wizardData}/>},
       {name: 'Background', component: <BackgroundStep wizardData={wizardData}/>},
       //{name: 'Layout', component: <PageLayoutStep wizardData={wizardData}/>},
@@ -125,42 +125,50 @@ export default class Wizard extends React.Component {
 
 
     return (
-      <div>
-        <SplitPane split="horizontal" defaultSize={70} minSize="50">
+      <div className="container-fluid">
 
-          <table style={{width:'100%'}}>
-            <tbody>
-            <tr>
-              <td style={{paddingLeft:20}}>
-                <Brand />
-              </td>
-              <td>
-                <div onKeyDown={this.handleKeyDown.bind(this)}>
-                  <ol className="progtrckr">{
-                    steps.map((s, i) =>
-                      <li value={i} key={i}
-                          className={"progtrckr-" + this.state.navState.styles[i]}
-                          onClick={this.handleOnClick.bind(this)}>
-                        <em>{i + 1}</em>
-                        <span>{steps[i].name}</span>
-                      </li>
-                    )}
-                  </ol>
-                </div>
-              </td>
-              <td>{!!this.state.selectedAlbum ? this.state.selectedAlbum.name : 'No album selected'}</td>
-              <td><a href="#/htmlBook"><span className="glyphicon glyphicon-blackboard" aria-hidden="true"></span></a></td>
-            </tr>
-            </tbody>
-          </table>
+          <nav className="navbar navbar-default navbar-fixed-top">
+            <div className="container">
+              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span className="sr-only">Toggle navigation</span>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+              </button>
+              <ul className="nav navbar-nav">
+                <li>
+                  <Brand />
+                </li>
+              </ul>
+              <div id="navbar" className="navbar-collapse collapse">
+                <ul className="nav nav-wizard" style={{float:'left', marginTop:'6'}}>{
+                  steps.map((s, i) =>
+                    <li key={i}>
+                      <a onClick={this.handleOnClick.bind(this,i)}>{steps[i].name}</a>
+                    </li>
+                  )}
+                </ul>
 
-          <SplitPane split="vertical" defaultSize={350} minSize="200">
-            <div style={{margin:10}}>{steps[this.state.compState].component}</div>
-            <div style={{margin:5}}>{this.state.schema === undefined ? "No album selected" :
+                <ul className="nav navbar-nav navbar-right">
+                  <li>
+                    <a href="#/htmlBook"><span className="glyphicon glyphicon-blackboard" aria-hidden="true"></span></a>
+                  </li>
+                  <li>
+                    <a onClick={()=>{flux.doAction('generateAlbum',"pdf")}}><span className="glyphicon glyphicon-print"
+                                                                                  aria-hidden="true"></span></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        <div style={{paddingTop:70}}>
+          <div className="row">
+            <div className="col-sm-4 col-md-2">{steps[this.state.compState].component}</div>
+            <div className="col-sm-8 col-md-10">{this.state.schema === undefined ? "No album selected" :
               <ImageGalleryView schema={this.state.schema} pageOptions={this.state.wizardData.pageOptions}
-                                wizardData={this.state.wizardData} dataContext={dataContext} />}</div>
-          </SplitPane>
-        </SplitPane>
+                                wizardData={this.state.wizardData} dataContext={dataContext}/>}</div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -33,7 +33,7 @@ class List extends React.Component {
 
     return (
       <div>
-        <div style={{position:'fixed'}}>
+        <div style={{position:'fixed',marginLeft:20}}>
           <button disabled={!canUp} type="button" className="btn btn-default" aria-label="Left Align"
                   onClick={this.up.bind(this)}>
             <span className="glyphicon glyphicon-circle-arrow-down" aria-hidden="true"></span>
@@ -43,10 +43,8 @@ class List extends React.Component {
             <span className="glyphicon glyphicon-circle-arrow-up" aria-hidden="true"></span>
           </button>
         </div>
-        <div  style={{paddingTop:40,float:'right'}}>
-          <ul>
+        <div style={{paddingTop:40,float:'right'}}>
             {itemElements}
-          </ul>
         </div>
       </div>
     );
@@ -91,19 +89,18 @@ class Item extends React.Component {
   render() {
     var item = this.props.item;
     var itemValue = item.value;
-    var itemStyle = {border: '1px solid gray'};
-    if (this.props.selected) itemStyle.backgroundColor = "blue";
+    var descValue =  _.trunc(itemValue.description, {'length': 50,'separator': ' '});
+
+    var itemStyle = {borderTop: '2px solid gray'};
+    if (this.props.selected) itemStyle.backgroundColor = "lightblue";
     return (
       <div style={itemStyle} onClick={(e) => {this.onChange(e,itemValue)}}>
         <table>
           <tbody>
           <tr>
-            <td>
-              <img src={itemValue.thumbnailUrl}/>
-            </td>
-            <td>
+            <td colSpan={2}>
               <div className="input-group">
-                <input type="text" className="form-control" valueLink={Binder.bindTo(item,"title")}/>
+                <input type="text"className="form-control" valueLink={Binder.bindTo(item,"title")}/>
                 <div className="input-group-btn">
                   <button type="button" className="btn btn-default" aria-label="Left Align"
                           onClick={(e) => {this.props.onRemove(item.value)}}>
@@ -113,6 +110,15 @@ class Item extends React.Component {
               </div>
             </td>
           </tr>
+          <tr>
+            <td>
+              <img src={itemValue.thumbnailUrl}/>
+            </td>
+            <td style={{verticalAlign:'top'}}>
+              {descValue}
+            </td>
+          </tr>
+
           </tbody>
         </table>
 

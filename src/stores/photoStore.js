@@ -15,9 +15,9 @@ var RedAndWhite = require("json!./templates/ReadAndWhite.json");
 //const history = createHistory();
 //console.log(browserHistory);
 let history = createHashHistory();
-//var url = 'http://photo-papermill.rhcloud.com';
+var url = 'http://photo-papermill.rhcloud.com';
 //var url = 'http://render-pergamon.rhcloud.com';
-var url = 'http://localhost:8080';
+//var url = 'http://localhost:8080';
 
 var reloadAlbum = function (url, imageSize, successCallback) {
 

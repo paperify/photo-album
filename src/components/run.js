@@ -8,7 +8,6 @@ import Main from './Main';
 import PhotoStore from '../stores/photoStore';
 import SplashScreen from './views/SplashScreen';
 import HtmlBookViewer from './views/SwipeBookViewer';
-import ImageBookViewer from './views/ImageBookViewer';
 import Wizard from './views/Wizard';
 
 
@@ -20,7 +19,6 @@ ReactDOM.render((
       <IndexRoute component={SplashScreen} />
 
       <Route path="htmlBook" component={HtmlBookViewer} />
-      <Route path="book" component={ImageBookViewer} />
       <Route path="wizard" component={Wizard}>
 
         {/* add some nested routes where we want the UI to nest */}
