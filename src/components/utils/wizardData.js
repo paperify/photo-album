@@ -29,7 +29,7 @@ var defaultWizardData = function(imageSize)
       imagesPerPage: imagesPerPage,
       double:true,
       useImageAsBackground:true,
-      useCoverPage:true,
+      useCoverPage:false,
       layout: {
         Container: DEFAULT_FLEX_CONTAINER,
         Item: DEFAULT_FLEX_ITEM

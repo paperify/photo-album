@@ -7,7 +7,7 @@ export default class HtmlPage extends React.Component
     render() {
         var options = this.props.pageOptions;
         var pageSize = [options.width, options.height];
-		
+
         //TODO: implement other sizes
         //else {
         //	paper.format = options.format || 'A4'
@@ -68,7 +68,7 @@ export default class HtmlPage extends React.Component
       //imgStyle.objectFit = 'cover';
 
         return (
-            <div id={'PAGE_' + this.props.pageNumber}>
+            <div id={'PAGE_' + this.props.pageNumber} className={this.props.className} style={this.props.style}>
               {/*<div style={{position:'absolute',width:pageStyle.width,height:pageStyle.height}}><img src={bg.image} style={imgStyle}></img></div>*/}
                 <div style={bgStyle} />
                 <div style={pageStyle}>

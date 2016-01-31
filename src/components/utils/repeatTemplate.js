@@ -12,7 +12,9 @@ const bindTo = function(self, x,index){
   }
 }
 
-export function toData(photos, templateImageCount){
+export function toData(schema,photos,useCoverPage){
+  var templateImageCount = (schema.props && schema.props.defaultData && schema.props.defaultData.images.length) || 0;
+
   var data = {};
   var groupImages = _.chunk(photos, templateImageCount);
   for (var i = 0; i !== groupImages.length; i++) {
@@ -41,8 +43,8 @@ export function toSchema(schema,photos,useCoverPage) {
   templatePages = _.rest(templatePages);
   //var pageCount = schema.containers.length;
   //var imageCount = photos.length;
-  var templateImageCount = schema.props.defaultData && schema.props.defaultData.images.length;
-
+  var templateImageCount = (schema.props.defaultData && schema.props.defaultData.images.length) || 0;
+  console.log("ImageCount:" + templateImageCount);
 
 
   var groupImages = _.chunk(photos, templateImageCount);

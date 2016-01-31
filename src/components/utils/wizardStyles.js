@@ -21,6 +21,9 @@ export default function(schema, wizardStyles) {
       text = styles["Core.HtmlBox"];
       if (text === undefined) text = styles["Core.HtmlBox"] ={};
       text.font = font;
+      text = styles["Core.SmartImageBox"];
+      if (text === undefined) text = styles["Core.SmartImageBox"] ={};
+      text.font = font;
     }
 
     //image settings

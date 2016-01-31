@@ -1,21 +1,54 @@
 import React from 'react';
 import Binder from 'react-binding';
 import flux from 'fluxify';
+import _ from 'lodash';
 
 class List extends React.Component {
-
-
   constructor(props) {
     super(props);
-    this.state = {selected: {}}
+    this.state = {}
   }
+  up(){
+    var photos = this.props.itemSource;
+    var items = photos.items;
+    var index =  _.findIndex(items,function(item){return  item.value.id===this.state.selected},this);
+    if (index === -1) return;
+    photos.move(index, index + 1);
+    //this.setState({selected:index+1});
+  }
+  down(){
 
+    var photos = this.props.itemSource;
+    var items = photos.items;
+    var index = _.findIndex(items,function(item){return  item.value.id===this.state.selected},this);
+    if (index === -1) return;
+    photos.move(index, index - 1);
+    //this.setState({selected:index-1});
+  }
   render() {
-    var items = this.props.items.map(this.renderItem.bind(this));
+    var items = this.props.itemSource.items;
+    var itemElements = items.map(this.renderItem.bind(this));
+    var canDown = items.length > 0? items[0].value.id !== this.state.selected:false;
+    var canUp = items.length > 0?items[items.length - 1].value.id !== this.state.selected:false;
+
     return (
-      <ul>
-        {items}
-      </ul>
+      <div>
+        <div style={{position:'fixed'}}>
+          <button disabled={!canUp} type="button" className="btn btn-default" aria-label="Left Align"
+                  onClick={this.up.bind(this)}>
+            <span className="glyphicon glyphicon-circle-arrow-down" aria-hidden="true"></span>
+          </button>
+          <button  disabled={!canDown} type="button" className="btn btn-default" aria-label="Left Align"
+                  onClick={this.down.bind(this)}>
+            <span className="glyphicon glyphicon-circle-arrow-up" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div  style={{paddingTop:40,float:'right'}}>
+          <ul>
+            {itemElements}
+          </ul>
+        </div>
+      </div>
     );
   }
 
@@ -24,38 +57,44 @@ class List extends React.Component {
       <Item
         key={i}
         item={item}
-        selected={!!this.state.selected[i]}
-        onSelect={this.onSelect.bind(this)}
-        onDeselect={this.onDeselect.bind(this)}/>
+        selected={this.state.selected === item.value.id}
+        onSelect={this.setSelected.bind(this)}
+        onRemove={this.remove.bind(this)}
+      />
     );
   }
 
-  onSelect(itemID) {
-    var selected = this.state.selected;
-    selected[itemID] = true;
-    this.setState({selected: selected});
+  setSelected(itemID) {
+    this.setState({selected: itemID})
+  }
+  remove(item){
+    this.props.itemSource.remove(item);
   }
 
-  onDeselect(itemID) {
-    var selected = this.state.selected;
-    delete selected[itemID];
-    this.setState({selected: selected});
-  }
+  //onSelect(itemID) {
+  //  var selected = this.state.selected;
+  //  selected[itemID] = true;
+  //  this.setState({selected: selected});
+  //}
+  //
+  //onDeselect(itemID) {
+  //  var selected = this.state.selected;
+  //  delete selected[itemID];
+  //  this.setState({selected: selected});
+  //}
 }
 class Item extends React.Component {
   onChange(event, itemValue) {
-    if (event.target.checked) {
-      this.props.onSelect(itemValue.id);
-    } else {
-      this.props.onDeselect(itemValue.id);
-    }
+    this.props.onSelect(itemValue.id);
   }
 
   render() {
     var item = this.props.item;
     var itemValue = item.value;
+    var itemStyle = {border: '1px solid gray'};
+    if (this.props.selected) itemStyle.backgroundColor = "blue";
     return (
-      <div style={{border:'1px solid gray'}}>
+      <div style={itemStyle} onClick={(e) => {this.onChange(e,itemValue)}}>
         <table>
           <tbody>
           <tr>
@@ -67,14 +106,11 @@ class Item extends React.Component {
                 <input type="text" className="form-control" valueLink={Binder.bindTo(item,"title")}/>
                 <div className="input-group-btn">
                   <button type="button" className="btn btn-default" aria-label="Left Align"
-                          onClick={()=>{photos.remove(item)}}>
+                          onClick={(e) => {this.props.onRemove(item.value)}}>
                     <span className="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
                   </button>
                 </div>
               </div>
-              <input type="checkbox" checked={this.props.selected}
-                     onChange={(e) => {this.onChange(e,itemValue)}}/>
-              <span>{itemValue.description}</span>
             </td>
           </tr>
           </tbody>
@@ -85,24 +121,12 @@ class Item extends React.Component {
   }
 }
 export default class PhotoStep extends React.Component {
-  onChange(event) {
-    if (event.target.checked) {
-      this.props.onSelect(this.item.id);
-    } else {
-      this.props.onDeselect(this.item.id);
-    }
-  }
 
   render() {
     var photos = Binder.bindArrayTo(this.props.wizardData, 'photos');
 
     return (<div>
-      <div>
-        Photos
-      </div>
-      <div>
-        <List items={photos.items}/>
-      </div>
+      <List itemSource={photos} />
     </div>);
   }
 };

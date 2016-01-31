@@ -107,7 +107,7 @@ export default class Wizard extends React.Component {
   render() {
     if (this.state.schema === undefined) return <div>Loading...</div>;
 
-    var data = toData(this.state.wizardData.photos, 14);
+    var data = toData(this.state.schema,this.state.wizardData.photos);
 
     var dataContext = Binder.bindToState({state:{data:data}},'data');
     var wizardData = Binder.bindToState(this, 'wizardData');

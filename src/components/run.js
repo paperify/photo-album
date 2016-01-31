@@ -7,7 +7,7 @@ import Main from './Main';
 
 import PhotoStore from '../stores/photoStore';
 import SplashScreen from './views/SplashScreen';
-import HtmlBookViewer from './views/HtmlBookViewer';
+import HtmlBookViewer from './views/SwipeBookViewer';
 import ImageBookViewer from './views/ImageBookViewer';
 import Wizard from './views/Wizard';
 

@@ -1,5 +1,5 @@
 {
-  "name": "Words and images",
+  "name": "ReadAndWhite",
   "elementName": "ObjectSchema",
   "props": {
     "defaultData": {
@@ -77,87 +77,6 @@
           "title": "Elia-Locardi-Travel-Photography-3k-Time-Stands-Still-Petra-By-Night-Jordan"
         },
         {
-          "url": "https://lh3.googleusercontent.com/-RZ9z3uZJBCs/UbUXUrT7S1I/AAAAAAAAO6o/3ufGf31yxKc/You%252520See%252520The%252520Colors%252520In%252520Me%252520Like%252520No%252520One%252520Else.jpg",
-          "height": 354,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © Lotus Carroll",
-          "title": "You See The Colors In Me Like No One Else"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/-Qyac2u1-BDc/Ub6Bs_tcQ1I/AAAAAAAACmw/MV9UZ6sWFBk/RacetrackOcculus.jpg",
-          "height": 342,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © Brian Bonham",
-          "title": "RacetrackOcculus"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/-2qZquiig_8g/Ucd9tUQxKRI/AAAAAAAAC2o/R7kFTe_RiS0/IMGP5337-2.jpg",
-          "height": 362,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © Derek Kind",
-          "title": "IMGP5337-2"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/-NVEhPjalaOc/UdIHP63dJRI/AAAAAAAADa0/FruggqWNSCA/Chinatown%252520I.jpg",
-          "height": 339,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © DeShaun Craddock",
-          "title": "Chinatown I"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/-qtDu4wyp5L4/Udo6E4P3kaI/AAAAAAAADns/EDma4uzpPC0/Merry%252520Go%252520Round_3000_px_.jpg",
-          "height": 339,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © Larry Nienkark",
-          "title": "Merry Go Round_3000_px_"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/-8G18nqXR_jQ/UeOJdMyQfsI/AAAAAAAAEBw/PNUUZoMGm-I/lavender-honey.jpg",
-          "height": 342,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © Nicole S. Young",
-          "title": "lavender-honey"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/-1NcBpOum6jM/UeyJ34HZCAI/AAAAAAAAEJo/5xEWHLC8-bU/IMG_1191-2.jpg",
-          "height": 302,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © Tony Eckersley",
-          "title": "IMG_1191-2"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/-c3mtxaXogzo/UfXevHeuPCI/AAAAAAAAEkE/P2bXiEkiZGU/NightGlow-2013-Germano-3515.jpg",
-          "height": 341,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © Christopher Germano",
-          "title": "NightGlow-2013-Germano-3515"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/-F16gN8nc7eE/Uf_ZSJWXr9I/AAAAAAAAE3s/OyG_oQqsNWo/TruckeeTrain.jpeg",
-          "height": 285,
-          "width": 512,
-          "type": "image/jpeg",
-          "medium": "image",
-          "description": "Image © Karen Hutton",
-          "title": "TruckeeTrain"
-        },
-        {
           "url": "https://lh3.googleusercontent.com/-W5fhoRlniy8/UghZa4UmN6I/AAAAAAAAFFU/z77ASAk3aWc/DSC_1312G%25252BCovershot.jpg",
           "height": 341,
           "width": 512,
@@ -165,16 +84,25 @@
           "medium": "image",
           "description": "+Google+ Photos Cover Photo for the week of August 11th, 2013 - +Tamara Pruessner\n\nWhen you render away any distractions from an image, you are left with the exact purpose that the photographer intended on. In our minds, the purpose of rendering out everything but this flamingo was to brilliantly convey its sheer elegance. Pink on black. Poetry standing still. It takes our breath away and we couldn't be happier to have this image donning our profile masthead for the next seven days.\n\nKudos, +Tamara Pruessner.",
           "title": "DSC_1312G+Covershot"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/-1aPa4bx80XI/UiP7L5I7WbI/AAAAAAAAFno/I1t_NzOxkzk/_MG_1684-Edit.jpg",
+          "height": 342,
+          "width": 512,
+          "type": "image/jpeg",
+          "medium": "image",
+          "description": "+Google+ Photos Cover Photo for the week of September 01st, 2013 - +Todd Sipes\n\nWho doesn't love a little Inception meets Escher meets Vertigo on their Sunday evenings? Aside from the dizzying and falling sensation created by Todd's choice of perspective, he does a brilliant job of playing two dominant colors (the tone of the stairs against the wooden rail) off of each other. In fact, the wooden rail serves really well as a leading line that travels all through to the vanishing point.\n\nAs a side note, if you're interested in reading some really great tips to help prepare for your own Urban Exploration shoot, Todd recently contributed to our #5TTC  series. You can read his entry here: https://plus.google.com/b/108972862430615180924/+GPhotos/posts/LrDbyHbLa5U",
+          "title": "_MG_1684-Edit"
         }
       ]
     },
     "background": {
       "color": {
-        "color": "#000000",
+        "color": "#ff1212",
         "hsv": {
           "h": 0,
-          "s": 0,
-          "v": 0
+          "s": 93,
+          "v": 100
         },
         "alpha": 100
       },
@@ -209,7 +137,7 @@
           },
           "padding": {
             "top": 40,
-            "right": 30,
+            "right": 60,
             "bottom": 30,
             "left": 30
           },
@@ -218,21 +146,19 @@
               "stops": [
                 {
                   "offset": 0,
-                  "color": "#e1e1e8"
+                  "color": "#ff0000"
                 },
                 {
-                  "offset": 0.5,
-                  "color": "#aaa"
+                  "offset": 0.5404984423676013,
+                  "color": "#f21b1b"
                 },
                 {
                   "offset": 1,
-                  "color": "#000000"
+                  "color": "#ff7878"
                 }
               ]
             },
-            "filter": {
-              "opacity": 50
-            }
+            "filter": {}
           }
         }
       },
@@ -253,7 +179,7 @@
       "props": {
         "unbreakable": true,
         "background": {
-          "image": "https://static.pexels.com/photos/24248/pexels-photo-large.jpg",
+          "image": "https://static.pexels.com/photos/15241/flower-roses-red-roses-bloom.jpg",
           "size": "cover",
           "filter": {}
         }
@@ -267,38 +193,15 @@
             "left": 60
           },
           "props": {
-            "content": "<h1>Words and images</h1>\n<p>by Roman Samec</p>",
+            "content": "<h1>Red and white</h1>\n<p>by Roman Samec</p>",
             "font": {
               "italic": false
             }
           },
-          "bindings": {
-            "content": {
-              "path": "images.0",
-              "mode": "OneWay",
-              "converter": {
-                "code": "return \"toHtml\"",
-                "compiled": "\"use strict\";\n\n(function () {\n  return \"toHtml\";\n})();"
-              }
-            }
-          }
-        },
-        {
-          "name": "ImageBox",
-          "elementName": "Core.ImageBox",
-          "style": {
-            "top": 10,
-            "left": 10
-          },
-          "props": {},
-          "bindings": {
-            "url": {
-              "path": "images.0.url",
-              "mode": "OneWay"
-            }
-          }
+          "bindings": {}
         }
-      ]
+      ],
+      "bindings": {}
     },
     {
       "name": "ImageContainer",
@@ -317,11 +220,12 @@
       },
       "boxes": [
         {
-          "name": "HtmlBox",
-          "elementName": "Core.HtmlBox",
+          "name": "Text",
+          "elementName": "Core.HtmlContent",
           "style": {
-            "top": 0,
-            "left": 0
+            "top": 60,
+            "left": 70,
+            "transform": {}
           },
           "props": {},
           "bindings": {
@@ -410,9 +314,15 @@
           "elementName": "Core.HtmlBox",
           "style": {
             "top": 0,
-            "left": 290
+            "left": 0,
+            "width": 790,
+            "height": 300,
+            "zIndex": "2",
+            "transform": {}
           },
-          "props": {},
+          "props": {
+            "clipPath": "polygon(0 0, 100% 0, 100% 72%, 0 100%)"
+          },
           "bindings": {
             "content": {
               "path": "images.2",
@@ -441,9 +351,8 @@
       "name": "ImageContainer",
       "elementName": "Container",
       "style": {
-        "width": 790,
-        "height": 1073,
-        "position": "relative"
+        "width": 744,
+        "height": 1073
       },
       "props": {
         "unbreakable": true
@@ -453,12 +362,14 @@
           "name": "SmartImageBox",
           "elementName": "Core.SmartImageBox",
           "style": {
-            "top": 30,
-            "left": 10,
-            "width": 765,
-            "transform": {}
+            "top": 10,
+            "left": 30
           },
-          "props": {},
+          "props": {
+            "border": {
+              "width": 5
+            }
+          },
           "bindings": {
             "url": {
               "path": "images.3.url",
@@ -478,11 +389,14 @@
           "name": "Copy SmartImageBox",
           "elementName": "Core.SmartImageBox",
           "style": {
-            "top": 560,
-            "left": 10,
-            "transform": {}
+            "top": 380,
+            "left": 180
           },
-          "props": {},
+          "props": {
+            "border": {
+              "width": 5
+            }
+          },
           "bindings": {
             "url": {
               "path": "images.4.url",
@@ -502,8 +416,8 @@
           "name": "HtmlContent",
           "elementName": "Core.HtmlContent",
           "style": {
-            "top": 560,
-            "left": 540
+            "top": 820,
+            "left": 30
           },
           "props": {},
           "bindings": {
@@ -524,9 +438,80 @@
       "name": "ImageContainer",
       "elementName": "Container",
       "style": {
-        "width": 790,
-        "height": 1073,
-        "position": "relative"
+        "width": 744,
+        "height": 1073
+      },
+      "props": {
+        "unbreakable": true,
+        "background": {
+          "size": "leftHalf",
+          "filter": {}
+        }
+      },
+      "boxes": [
+        {
+          "name": "Copy HtmlBox",
+          "elementName": "Core.HtmlBox",
+          "style": {
+            "left": 0,
+            "width": 790,
+            "height": 300,
+            "zIndex": "2",
+            "transform": {}
+          },
+          "props": {
+            "clipPath": "polygon(0 0, 100% 0, 100% 72%, 0 100%)"
+          },
+          "bindings": {
+            "content": {
+              "path": "images.5",
+              "mode": "OneWay",
+              "converter": {
+                "code": "return \"toHtml\"",
+                "compiled": "\"use strict\";\n\n(function () {\n  return \"toHtml\";\n})();"
+              }
+            }
+          }
+        },
+        {
+          "name": "Copy Copy HtmlBox",
+          "elementName": "Core.HtmlBox",
+          "style": {
+            "top": 920,
+            "width": 790,
+            "height": 200,
+            "zIndex": "2",
+            "transform": {}
+          },
+          "props": {
+            "content": "<h1>PIONEERING IT SOLUTIONS</h1>",
+            "padding": {
+              "top": 60,
+              "left": 100
+            },
+            "clipPath": "polygon(0 22%, 100% 0, 100% 100%, 0 100%)"
+          },
+          "bindings": {}
+        }
+      ],
+      "bindings": {
+        "background": {
+          "path": "images.5.url",
+          "mode": "OneWay",
+          "converter": {
+            "code": "return \"toBackground\"",
+            "compiled": "\"use strict\";\n\n(function () {\n  return \"toBackground\";\n})();"
+          },
+          "converterArgs": "cover"
+        }
+      }
+    },
+    {
+      "name": "ImageContainer",
+      "elementName": "Container",
+      "style": {
+        "width": 744,
+        "height": 1073
       },
       "props": {
         "unbreakable": true
@@ -536,27 +521,12 @@
           "name": "Copy SmartImageBox",
           "elementName": "Core.SmartImageBox",
           "style": {
-            "top": 50,
-            "left": 10,
-            "width": 380,
-            "height": 300,
+            "top": 0,
+            "left": 0,
+            "width": 790,
             "transform": {}
           },
-          "props": {
-            "border": {
-              "width": 2,
-              "color": {
-                "color": "#ffffff",
-                "hsv": {
-                  "h": 0,
-                  "s": 0,
-                  "v": 100
-                },
-                "alpha": 100
-              }
-            },
-            "objectFit": "cover"
-          },
+          "props": {},
           "bindings": {
             "url": {
               "path": "images.6.url",
@@ -576,67 +546,11 @@
           "name": "Copy Copy SmartImageBox",
           "elementName": "Core.SmartImageBox",
           "style": {
-            "top": 50,
-            "left": 400,
-            "width": 380,
-            "height": 300,
+            "top": 590,
+            "width": 790,
             "transform": {}
           },
-          "props": {
-            "border": {
-              "width": 2,
-              "color": {
-                "color": "#ffffff",
-                "hsv": {
-                  "h": 0,
-                  "s": 0,
-                  "v": 100
-                },
-                "alpha": 100
-              }
-            },
-            "objectFit": "cover"
-          },
-          "bindings": {
-            "url": {
-              "path": "images.9.url",
-              "mode": "OneWay"
-            },
-            "caption": {
-              "path": "images.9.title",
-              "mode": "OneWay"
-            },
-            "description": {
-              "path": "images.9.description",
-              "mode": "OneWay"
-            }
-          }
-        },
-        {
-          "name": "Copy Copy SmartImageBox",
-          "elementName": "Core.SmartImageBox",
-          "style": {
-            "top": 360,
-            "left": 10,
-            "width": 380,
-            "height": 300,
-            "transform": {}
-          },
-          "props": {
-            "border": {
-              "width": 2,
-              "color": {
-                "color": "#ffffff",
-                "hsv": {
-                  "h": 0,
-                  "s": 0,
-                  "v": 100
-                },
-                "alpha": 100
-              }
-            },
-            "objectFit": "cover"
-          },
+          "props": {},
           "bindings": {
             "url": {
               "path": "images.7.url",
@@ -649,186 +563,6 @@
             "description": {
               "path": "images.7.description",
               "mode": "OneWay"
-            }
-          }
-        },
-        {
-          "name": "Copy Copy SmartImageBox",
-          "elementName": "Core.SmartImageBox",
-          "style": {
-            "top": 670,
-            "left": 10,
-            "width": 380,
-            "height": 300,
-            "transform": {}
-          },
-          "props": {
-            "border": {
-              "width": 2,
-              "color": {
-                "color": "#ffffff",
-                "hsv": {
-                  "h": 0,
-                  "s": 0,
-                  "v": 100
-                },
-                "alpha": 100
-              }
-            },
-            "objectFit": "cover"
-          },
-          "bindings": {
-            "url": {
-              "path": "images.8.url",
-              "mode": "OneWay"
-            },
-            "caption": {
-              "path": "images.8.title",
-              "mode": "OneWay"
-            },
-            "description": {
-              "path": "images.8.description",
-              "mode": "OneWay"
-            }
-          }
-        },
-        {
-          "name": "Copy Copy Copy SmartImageBox",
-          "elementName": "Core.SmartImageBox",
-          "style": {
-            "top": 360,
-            "left": 400,
-            "width": 380,
-            "height": 300,
-            "transform": {}
-          },
-          "props": {
-            "border": {
-              "width": 2,
-              "color": {
-                "color": "#ffffff",
-                "hsv": {
-                  "h": 0,
-                  "s": 0,
-                  "v": 100
-                },
-                "alpha": 100
-              }
-            },
-            "objectFit": "cover"
-          },
-          "bindings": {
-            "url": {
-              "path": "images.10.url",
-              "mode": "OneWay"
-            },
-            "caption": {
-              "path": "images.10.title",
-              "mode": "OneWay"
-            },
-            "description": {
-              "path": "images.10.description",
-              "mode": "OneWay"
-            }
-          }
-        },
-        {
-          "name": "Copy Copy Copy SmartImageBox",
-          "elementName": "Core.SmartImageBox",
-          "style": {
-            "top": 670,
-            "left": 400,
-            "width": 380,
-            "height": 300,
-            "transform": {}
-          },
-          "props": {
-            "border": {
-              "width": 2,
-              "color": {
-                "color": "#ffffff",
-                "hsv": {
-                  "h": 0,
-                  "s": 0,
-                  "v": 100
-                },
-                "alpha": 100
-              }
-            },
-            "objectFit": "cover"
-          },
-          "bindings": {
-            "url": {
-              "path": "images.11.url",
-              "mode": "OneWay"
-            },
-            "caption": {
-              "path": "images.11.title",
-              "mode": "OneWay"
-            },
-            "description": {
-              "path": "images.11.description",
-              "mode": "OneWay"
-            }
-          }
-        }
-      ],
-      "bindings": {}
-    },
-    {
-      "name": "ImageContainer",
-      "elementName": "Container",
-      "style": {
-        "width": 744,
-        "height": 1073
-      },
-      "props": {
-        "unbreakable": true,
-        "background": {
-          "color": {
-            "color": "#ff0a0a"
-          },
-          "size": "leftHalf",
-          "filter": {}
-        }
-      },
-      "boxes": [
-        {
-          "name": "ImageBox",
-          "elementName": "Core.ImageBox",
-          "style": {
-            "top": 0,
-            "left": 0,
-            "width": 800,
-            "height": 790,
-            "transform": {}
-          },
-          "props": {},
-          "bindings": {
-            "url": {
-              "path": "images.5.url",
-              "mode": "OneWay"
-            }
-          }
-        },
-        {
-          "name": "HtmlBox",
-          "elementName": "Core.HtmlBox",
-          "style": {
-            "top": 790,
-            "width": 800,
-            "height": 350,
-            "transform": {}
-          },
-          "props": {},
-          "bindings": {
-            "content": {
-              "path": "images.5",
-              "mode": "OneWay",
-              "converter": {
-                "code": "return \"toHtml\"",
-                "compiled": "\"use strict\";\n\n(function () {\n  return \"toHtml\";\n})();"
-              }
             }
           }
         }
@@ -850,24 +584,24 @@
           "name": "Copy SmartImageBox",
           "elementName": "Core.SmartImageBox",
           "style": {
-            "top": 110,
+            "top": 80,
             "left": 40,
             "transform": {}
           },
           "props": {
-            "clipPath": "polygon(0% 15%, 15% 15%, 15% 0%, 85% 0%, 85% 15%, 100% 15%, 100% 85%, 85% 85%, 85% 100%, 15% 100%, 15% 85%, 0% 85%)"
+            "clipPath": "polygon(52% 0, 100% 38%, 100% 100%, 0 100%, 0 0)"
           },
           "bindings": {
             "url": {
-              "path": "images.12.url",
+              "path": "images.8.url",
               "mode": "OneWay"
             },
             "caption": {
-              "path": "images.12.title",
+              "path": "images.8.title",
               "mode": "OneWay"
             },
             "description": {
-              "path": "images.12.description",
+              "path": "images.8.description",
               "mode": "OneWay"
             }
           }
@@ -876,24 +610,24 @@
           "name": "Copy Copy SmartImageBox",
           "elementName": "Core.SmartImageBox",
           "style": {
-            "top": 600,
-            "left": 200,
+            "top": 510,
+            "left": 180,
             "transform": {}
           },
           "props": {
-            "clipPath": "polygon(0% 15%, 15% 15%, 15% 0%, 85% 0%, 85% 15%, 100% 15%, 100% 85%, 85% 85%, 85% 100%, 15% 100%, 15% 85%, 0% 85%)"
+            "clipPath": "polygon(100% 0, 100% 43%, 51% 100%, 0 100%, 0 0)"
           },
           "bindings": {
             "url": {
-              "path": "images.13.url",
+              "path": "images.9.url",
               "mode": "OneWay"
             },
             "caption": {
-              "path": "images.13.title",
+              "path": "images.9.title",
               "mode": "OneWay"
             },
             "description": {
-              "path": "images.13.description",
+              "path": "images.9.description",
               "mode": "OneWay"
             }
           }
@@ -916,17 +650,17 @@
           "name": "ImageFlexBox",
           "elementName": "Core.ImageFlexBox",
           "style": {
-            "top": 30,
-            "left": 10,
-            "height": 1030,
+            "top": 0,
+            "left": 0,
+            "width": 790,
+            "height": 1100,
             "transform": {}
           },
           "props": {
-            "flexDirection": "column-reverse",
+            "flexDirection": "row",
             "alignContent": "flex-start",
             "image": {
-              "width": 250,
-              "objectFit": "cover"
+              "height": 200
             }
           },
           "bindings": {
@@ -934,8 +668,8 @@
               "path": "images",
               "mode": "OneWay",
               "converter": {
-                "code": "return {\n  format:function(items){\n    return Object.keys(items).map(function(key) { return items[key]});\n  }\n}",
-                "compiled": "\"use strict\";\n\n(function () {\n  return {\n    format: function format(items) {\n      return Object.keys(items).map(function (key) {\n        return items[key];\n      });\n    }\n  };\n})();"
+                "code": "return {\n  format:function(items,args){    \n    return Object.keys(items).map(function(key){\n      return items[key];\n    })\n  }\n}",
+                "compiled": "\"use strict\";\n\n(function () {\n  return {\n    format: function format(items, args) {\n      return Object.keys(items).map(function (key) {\n        return items[key];\n      });\n    }\n  };\n})();"
               }
             }
           }

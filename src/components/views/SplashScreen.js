@@ -29,15 +29,15 @@ const Menu = React.createClass({
   handleClick(data) {
 
     console.log(`Clicked on menu ${data.item} on ${data}`);
-    flux.doAction('generateAlbum', data.name, WizardData[data.item], 'pdf');
+    flux.doAction('selectAlbum', data.name,data.item);
   },
   render() {
     return (
       <ContextMenu identifier="multi">
-        <MenuItem onSelect={this.handleClick} data={{item: "default"}}>Original</MenuItem>
-        <MenuItem onSelect={this.handleClick} data={{item: "middle"}}>Compact</MenuItem>
-        <MenuItem onSelect={this.handleClick} data={{item: "small"}}>Small</MenuItem>
-        <MenuItem onSelect={this.handleClick} data={{item: "small"}}>Mini</MenuItem>
+        <MenuItem onSelect={this.handleClick} data={{item: "WordsAndImages"}}>Words and Images</MenuItem>
+        <MenuItem onSelect={this.handleClick} data={{item: "RedAndWhite"}}>Red and White</MenuItem>
+        <MenuItem onSelect={this.handleClick} data={{item: "Artistic"}}>Artistic</MenuItem>
+        <MenuItem onSelect={this.handleClick} data={{item: "Travel"}}>Travel</MenuItem>
       </ContextMenu>
     );
   }
@@ -54,7 +54,7 @@ class Tile extends React.Component {
         <img style={{maxHeight:200,maxWidth:300}} src={item.coverImageUrl} alt={item.name}
              onClick={() => {this.props.itemClick(item)}}/>
         <div className="caption">
-          <span style={{fontSize:30}} className="pull-right glyphicon glyphicon-th-list" aria-hidden="true"></span>
+          <span style={{fontSize:30}} className="pull-right glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
           <h4 onClick={() => {this.props.itemClick(item)}}>{title}</h4>
         </div>
       </div>)

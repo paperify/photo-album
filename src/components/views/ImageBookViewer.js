@@ -137,9 +137,7 @@ export default class ImageBookViewer extends React.Component {
   }
 
   componentDidMount() {
-
-    console.log(this.state.wizardData);
-    flux.doAction('generatePages', this.state.selectedAlbum, this.state.wizardData, "png");
+    flux.doAction('generatePages',"png");
     var me = this;
     PhotoStore.on('change:pages', function (value) {
       me.setState({
@@ -176,7 +174,7 @@ export default class ImageBookViewer extends React.Component {
                     <a href="#/wizard"><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
                   </li>
                   <li>
-                    <a onClick={()=>{flux.doAction('generateAlbum',undefined,undefined,"pdf")}}><span
+                    <a onClick={()=>{flux.doAction('generateAlbum',"pdf")}}><span
                       className="glyphicon glyphicon-print" aria-hidden="true"></span></a>
                   </li>
                 </ul>

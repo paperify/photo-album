@@ -4,17 +4,20 @@ import _ from 'lodash';
 import WizardData from '../components/utils/wizardData';
 import GraphicUtil from '../components/utils/graphicUtil';
 import { createHashHistory } from 'history';
-import {toSchema} from '../components/utils/repeatTemplate';
+import {toSchema,toData} from '../components/utils/repeatTemplate';
+import wizardStyles from '../components/utils/wizardStyles';
+
 
 var WordsAndImages = require("json!./templates/Words and images.json");
-var WordsAndImages2 = require("json!./templates/Words and images 2.json");
+var RedAndWhite = require("json!./templates/ReadAndWhite.json");
+//var WordsAndImages2 = require("json!./templates/Words and images 2.json");
 
 //const history = createHistory();
 //console.log(browserHistory);
 let history = createHashHistory();
-var url = 'http://photo-papermill.rhcloud.com';
+//var url = 'http://photo-papermill.rhcloud.com';
 //var url = 'http://render-pergamon.rhcloud.com';
-//var url = 'http://localhost:8080';
+var url = 'http://localhost:8080';
 
 var reloadAlbum = function (url, imageSize, successCallback) {
 
@@ -74,7 +77,6 @@ var generateSchema = function(photos,wizardData){
   return gallery.generate();
 }
 
-var i=0;
 var photoStore = flux.createStore({
   id: 'photoStore',
   initialState: {
@@ -82,9 +84,8 @@ var photoStore = flux.createStore({
     history:history,
     templates:{
       WordsAndImages:WordsAndImages,
-      WordsAndImages2:WordsAndImages2
-    },
-    templateName:'WordsAndImages'
+      RedAndWhite:RedAndWhite
+    }
   },
   actionCallbacks: {
     userLoaded: function (updater, currentUser) {
@@ -125,16 +126,18 @@ var photoStore = flux.createStore({
 
     },
 
-    selectAlbum: function (updater, album) {
-      var templateKey = photoStore.templateName;
-      var wizardData = photoStore.wizardData;
+    selectAlbum: function (updater, album, templateName) {
+      if (templateName === undefined) templateName = photoStore.templateName || "None";
+
+      var wizardData = _.extend(photoStore.wizardData,{templateName:templateName});
 
       reloadAlbum(album.url, 'original', (photos) => {
         wizardData.photos = photos;
         updater.set({
           selectedAlbum: _.extend(_.clone(album), {photos: photos}),
           wizardData: wizardData,
-          schema:templateKey === "None"?generateSchema(photos,wizardData): getSchema(templateKey, photos,wizardData.template && wizardData.template.useCoverPage)
+          templateName:templateName,
+          schema:templateName === "None"?generateSchema(photos,wizardData): getSchema(templateName, photos,wizardData.template && wizardData.template.useCoverPage)
         })
       });
     },
@@ -148,94 +151,74 @@ var photoStore = flux.createStore({
         schema: templateKey === "None"?generateSchema(album.photos,wizardData): getSchema(templateKey, album.photos, wizardData.template && wizardData.template.useCoverPage)
       })
     },
-    changeImageSize: function (updater, imageSize) {
-      var templateKey = photoStore.templateName;
-      var wizardData = photoStore.wizardData;
-      var album = photoStore.selectedAlbum;
-
-      reloadAlbum(album.url, imageSize, (photos) => {
-        updater.set({
-          selectedAlbum: _.extend(_.clone(album), {photos: photos}),
-          schema:templateKey === "None"?generateSchema(photos,wizardData): getSchema(templateKey, photos,wizardData.template && wizardData.template.useCoverPage)
-        })
-      });
-    },
-    generateAlbum(updater,item,wizardData,type){
-      if (item === undefined) item = photoStore.selectedAlbum;
-      if (wizardData === undefined) wizardData = photoStore.wizardData;
+    generateAlbum(updater,type){
       if (type === undefined) type = "pdf";
-      var album = item;
+      var wizardData = photoStore.wizardData;
+      var schema = _.cloneDeep(photoStore.schema);
 
-      //var photos = album.photos;
-      reloadAlbum(album.url, wizardData.imageSize, (photos) => {
+      //apply wizard styles to schema
+      wizardStyles(schema,wizardData && wizardData.styles);
 
-        var imageGallery = new ImageGallery(album.name, photos, wizardData.template, wizardData.pageOptions);
-        var contentType = 'image/' + type;
-        if (type === "pdf") contentType = 'application/pdf';
+      var data = toData(schema,wizardData.photos);
 
-        //var name = this.context.router.getCurrentParams().name;
+      var contentType = 'image/' + type;
+      if (type === "pdf") contentType = 'application/pdf';
 
-        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
-        xmlhttp.open("POST", url + '/' + type);
+      var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+      xmlhttp.open("POST", url + '/' + type);
 
-        //xmlhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
-        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xmlhttp.responseType = 'arraybuffer';
+      //xmlhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+      xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xmlhttp.responseType = 'arraybuffer';
 
-        xmlhttp.onreadystatechange = function () {
-          if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            var blob = new Blob([xmlhttp.response], {type: contentType});
-            var fileURL = URL.createObjectURL(blob);
-            window.open(fileURL);
-          }
-        };
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          var blob = new Blob([xmlhttp.response], {type: contentType});
+          var fileURL = URL.createObjectURL(blob);
+          window.open(fileURL);
+        }
+      };
 
-        var pageOptions = _.extend(_.clone(wizardData.pageOptions),{
-          height: GraphicUtil.pixelToPoint(wizardData.pageOptions.height),
-          width: GraphicUtil.pixelToPoint(wizardData.pageOptions.width)
-        });
-        xmlhttp.send(JSON.stringify(_.extend(imageGallery.generate(), {
-          pageOptions: pageOptions
-        })));
+      var pageOptions = _.extend(_.clone(wizardData.pageOptions), {
+        height: GraphicUtil.pixelToPoint(wizardData.pageOptions.height),
+        width: GraphicUtil.pixelToPoint(wizardData.pageOptions.width)
       });
+      xmlhttp.send(JSON.stringify(_.extend(schema, {
+        pageOptions: pageOptions,
+        data:data
+      })));
     },
-    generatePages(updater,item,wizardData,type){
+    generatePages(updater,type){
       if (type === undefined) type = "png";
-      var album = item;
+      var wizardData = photoStore.wizardData;
+      var schema = _.cloneDeep(photoStore.schema);
 
-      //var photos = album.photos;
-      reloadAlbum(album.url, wizardData.imageSize, (photos) => {
+      //apply wizard styles to schema
+      wizardStyles(schema, wizardData && wizardData.styles);
 
-        var imageGallery = new ImageGallery(album.name, photos, wizardData.template, wizardData.pageOptions);
-        //var contentType = 'image/' + type;
-        //if (type === "pdf") contentType = 'application/pdf';
+      var data = toData(schema,wizardData.photos);
 
-        //var name = this.context.router.getCurrentParams().name;
+      var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+      xmlhttp.open("POST", url + '/' + type);
 
-        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
-        xmlhttp.open("POST", url + '/' + type);
+      //xmlhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+      xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
-        //xmlhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
-        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          var pages = JSON.parse(xmlhttp.response);
+          updater.set({pages: pages})
+        }
+      };
 
-        xmlhttp.onreadystatechange = function () {
-          if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            var pages = JSON.parse(xmlhttp.response);
-            updater.set({pages:pages})
-          }
-        };
-
-        var pageOptions = _.extend(_.clone(wizardData.pageOptions),{
-          height: GraphicUtil.pixelToPoint(wizardData.pageOptions.height),
-          width: GraphicUtil.pixelToPoint(wizardData.pageOptions.width)
-        });
-        xmlhttp.send(JSON.stringify(_.extend(imageGallery.generate(), {
-          pageOptions: pageOptions
-        })));
+      var pageOptions = _.extend(_.clone(wizardData.pageOptions), {
+        height: GraphicUtil.pixelToPoint(wizardData.pageOptions.height),
+        width: GraphicUtil.pixelToPoint(wizardData.pageOptions.width)
       });
-    },
-    loadTemplate:function(updater){
-
+      xmlhttp.send(JSON.stringify(_.extend(schema, {
+        pageOptions: pageOptions,
+        data:data
+      })));
     }
   }
 });
