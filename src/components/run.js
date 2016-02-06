@@ -9,6 +9,7 @@ import PhotoStore from '../stores/photoStore';
 import SplashScreen from './views/SplashScreen';
 import HtmlBookViewer from './views/SwipeBookViewer';
 import Wizard from './views/Wizard';
+import SimpleViewer from './views/SimpleViewer';
 
 
 // Render the main component into the dom
@@ -19,13 +20,8 @@ ReactDOM.render((
       <IndexRoute component={SplashScreen} />
 
       <Route path="htmlBook" component={HtmlBookViewer} />
-      <Route path="wizard" component={Wizard}>
-
-        {/* add some nested routes where we want the UI to nest */}
-        {/* render the stats page when at `/inbox` */}
-        {/* <IndexRoute component={InboxStats}/> */}
-        {/* render the message component at /inbox/messages/123 */}
-      </Route>
+      <Route path="wizard" component={Wizard}/>
+      <Route path="viewer/:id" component={SimpleViewer}/>
     </Route>
   </Router>
 ), document.getElementById('app'));

@@ -15,9 +15,9 @@ var RedAndWhite = require("json!./templates/ReadAndWhite.json");
 //const history = createHistory();
 //console.log(browserHistory);
 let history = createHashHistory();
-var url = 'http://photo-papermill.rhcloud.com';
+//  var url = 'http://photo-papermill.rhcloud.com';
 //var url = 'http://render-pergamon.rhcloud.com';
-//var url = 'http://localhost:8080';
+var url = 'http://localhost:8080';
 
 var reloadAlbum = function (url, imageSize, successCallback) {
 
@@ -76,10 +76,12 @@ var generateSchema = function(photos,wizardData){
   var gallery = new ImageGallery("ImageGallery",photos, wizardData.template, wizardData.pageOptions);
   return gallery.generate();
 }
+var dataServiceUrl = "http://localhost:8080";
 
 var photoStore = flux.createStore({
   id: 'photoStore',
   initialState: {
+    dataServiceUrl: dataServiceUrl,
     wizardData: WizardData.default,
     history:history,
     templates:{
@@ -97,11 +99,8 @@ var photoStore = flux.createStore({
 
       var url = 'https://picasaweb.google.com/data/feed/api/user/' + currentUser.id;
       $.ajax({
-        dataType: 'jsonp',
+        dataType: 'json',
         url: url,
-        data: {
-          alt: 'json-in-script'
-        },
         jsonpCallback: 'picasaCallback',
         success: function (data) {
           var photos = [];
@@ -116,6 +115,34 @@ var photoStore = flux.createStore({
 
           });
           updater.set({privateAlbums: albums, user: currentUser});
+          console.log(currentUser);
+          $.ajax({
+            type: "GET",
+            url: dataServiceUrl + "/users?authId=" + currentUser.id,
+            dataType: 'json',
+            success: function (data) {
+              console.log(data);
+              var exists = data !== undefined && data.length === 1;
+              var myUrl = dataServiceUrl + "/users";
+              if (exists) myUrl +="/" + data[0]._id;
+              $.ajax({
+                type: exists?"PUT":"POST",
+                url: myUrl,
+                data:  {authId:currentUser.id,name:currentUser.name},
+                dataType: 'json',
+                success: function (data) {
+                  updater.set({owner:data});
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                  alert("failed");
+                }
+              })
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+              alert("failed");
+            }
+          })
           //console.log(albums);
         },
         error: function () {
@@ -125,7 +152,33 @@ var photoStore = flux.createStore({
       //console.log(currentUser);
 
     },
+    publish:function(updater){
+      var state = photoStore.getState();
+      var album = state.selectedAlbum;
+      var wizardData = state.wizardData;
+      var schemaData = toData(state.schema,wizardData.photos);
+      var schema = _.cloneDeep(state.schema);
 
+      //apply wizard styles to schema
+      wizardStyles(schema,state.wizardData && state.wizardData.styles);
+      var owner = state.owner;
+      $.ajax({
+        type: "POST",
+        url: dataServiceUrl + "/docs",
+        data:{schemaTemplate:JSON.stringify(schema), data:schemaData, customData:wizardData,name:album.name, owner:owner._id},
+        dataType: 'json',
+        //contentType: 'application/json',
+        success: function (data) {
+          console.log(data);
+          updater.set({
+            published:data._id
+          })
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert("failed");
+        }
+      })
+    },
     selectAlbum: function (updater, album, templateName) {
       if (templateName === undefined) templateName = photoStore.templateName || "None";
 

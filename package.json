@@ -22,7 +22,7 @@
   },
   "repository": "",
   "keywords": [],
-  "author": "Your name here",
+  "author": "Roman Samec",
   "devDependencies": {
     "babel-core": "^6.0.0",
     "babel-eslint": "^5.0.0-beta4",

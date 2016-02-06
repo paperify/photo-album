@@ -102,6 +102,11 @@ export default class Wizard extends React.Component {
         wizardData: value
       });
     });
+
+    PhotoStore.on('change:published', function (value) {
+      me.context.history.pushState(null, '/viewer/' + value);
+    });
+
   }
 
   render() {
@@ -154,9 +159,15 @@ export default class Wizard extends React.Component {
                     <a href="#/htmlBook"><span className="glyphicon glyphicon-blackboard" aria-hidden="true"></span></a>
                   </li>
                   <li>
-                    <a onClick={()=>{flux.doAction('generateAlbum',"pdf")}}><span className="glyphicon glyphicon-print"
-                                                                                  aria-hidden="true"></span></a>
+                    <a onClick={()=>{flux.doAction('publish')}}><span className="glyphicon glyphicon-share" aria-hidden="true"></span></a>
                   </li>
+                  <li>
+                    <a onClick={()=>{flux.doAction('generateAlbum',"pdf")}}><span className="glyphicon glyphicon-print" aria-hidden="true"></span></a>
+                  </li>
+                  <li>
+                    <a onClick={()=>{flux.doAction('generateAlbum',"jpg")}}><span className="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
+                  </li>
+
                 </ul>
               </div>
             </div>
@@ -172,4 +183,7 @@ export default class Wizard extends React.Component {
       </div>
     );
   }
+};
+Wizard.contextTypes = {
+  history: React.PropTypes.object
 };

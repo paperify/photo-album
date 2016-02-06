@@ -67,9 +67,9 @@ export default class ReactSwipe extends React.Component {
 
   componentDidMount() {
     var me = this;
-    window.addEventListener('resize', this.handleResize.bind(this));
+    //window.addEventListener('resize', this.handleResize.bind(this));
     var root = ReactDOM.findDOMNode(this);
-    me.resize(root);
+    //me.resize(root);
     me.swipe = Swipe(root, objectAssign({}, this.props));
   }
 

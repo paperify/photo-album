@@ -40,7 +40,7 @@ class HtmlBook extends React.Component {
   }
   handleResize() {
     var bookNode = ReactDOM.findDOMNode(this.refs.book);
-    var size = this.resize(bookNode);
+    //var size = this.resize(bookNode);
     //$(bookNode).turn('size', size.width, size.height);
   }
 
@@ -83,7 +83,7 @@ class HtmlBook extends React.Component {
     var pageOptions = this.state.wizardData && this.state.wizardData.pageOptions;
 
     return (<div ref="book" style={{paddingBottom:10,paddingLeft:10,paddingRight:10}}>
-        <HtmlPagesRenderer pagesRoot={Slider} widgets={Widgets} schema={schema} dataContext={dataContext} pageOptions={pageOptions}/>
+        <HtmlPagesRenderer  widgets={Widgets} schema={schema} dataContext={dataContext} pageOptions={pageOptions}/>
     </div>)
   }
 };
@@ -91,7 +91,7 @@ class HtmlBook extends React.Component {
 export default class HtmlBookViewer extends React.Component {
   render() {
     return <div>
-      <header>
+      {/*<header>
         <nav className="navbar navbar-default navbar-fixed-top">
           <div className="container">
             <ul className="nav navbar-nav">
@@ -113,7 +113,7 @@ export default class HtmlBookViewer extends React.Component {
             </div>
           </div>
         </nav>
-      </header>
+      </header>*/}
       <div style={{paddingTop:70}}>
         <HtmlBook/>
       </div>
