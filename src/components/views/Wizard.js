@@ -2,7 +2,7 @@ import React from 'react';
 import {ImageGallery} from '../layout/ImageGallery';
 import Binder from 'react-binding';
 import _ from 'lodash';
-//import SplitPane from 'react-split-pane';
+import SplitPane from 'react-split-pane';
 import flux from 'fluxify';
 
 //steps
@@ -85,10 +85,11 @@ export default class Wizard extends React.Component {
   }
 
   generatePdf() {
-    flux.doAction('generateAlbum','pdf');
+    flux.doAction('generateAlbum', 'pdf');
   }
 
   componentDidMount() {
+    document.body.classList.add('wizard');
     var me = this;
 
     PhotoStore.on('change:schema', function (value) {
@@ -102,17 +103,14 @@ export default class Wizard extends React.Component {
         wizardData: value
       });
     });
-
-    PhotoStore.on('change:published', function (value) {
-      me.context.history.pushState(null, '/viewer/' + value);
-    });
-
   }
-
+  componentWillUnmount() {
+    document.body.classList.remove('wizard');
+  }
   render() {
     if (this.state.schema === undefined) return <div>Loading...</div>;
 
-    var data = toData(this.state.schema, this.state.wizardData.photos);
+    var data = toData(this.state.schema, this.state.wizardData);
 
     var dataContext = Binder.bindToState({state: {data: data}}, 'data');
     var wizardData = Binder.bindToState(this, 'wizardData');
@@ -131,54 +129,45 @@ export default class Wizard extends React.Component {
 
     return (
       <div className="container-fluid">
+        <nav className="navbar navbar-default navbar-fixed-top">
+          <div className="container">
+            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span className="sr-only">Toggle navigation</span>
+              <span className="icon-bar"></span>
+              <span className="icon-bar"></span>
+              <span className="icon-bar"></span>
+            </button>
+            <ul className="nav navbar-nav">
+              <li>
+                <Brand />
+              </li>
+            </ul>
+            <div id="navbar" className="navbar-collapse collapse">
+              <ul className="nav nav-wizard" style={{float:'left', marginTop:'6'}}>{
+                steps.map((s, i) =>
+                  <li key={i}>
+                    <a onClick={this.handleOnClick.bind(this,i)}>{steps[i].name}</a>
+                  </li>
+                )}
+              </ul>
 
-          <nav className="navbar navbar-default navbar-fixed-top">
-            <div className="container">
-              <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span className="sr-only">Toggle navigation</span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-              </button>
-              <ul className="nav navbar-nav">
+              <ul className="nav navbar-nav navbar-right">
                 <li>
-                  <Brand />
+                  <a href="#/htmlBook"><span className="glyphicon glyphicon-blackboard" aria-hidden="true"></span></a>
                 </li>
               </ul>
-              <div id="navbar" className="navbar-collapse collapse">
-                <ul className="nav nav-wizard" style={{float:'left', marginTop:'6'}}>{
-                  steps.map((s, i) =>
-                    <li key={i}>
-                      <a onClick={this.handleOnClick.bind(this,i)}>{steps[i].name}</a>
-                    </li>
-                  )}
-                </ul>
-
-                <ul className="nav navbar-nav navbar-right">
-                  <li>
-                    <a href="#/htmlBook"><span className="glyphicon glyphicon-blackboard" aria-hidden="true"></span></a>
-                  </li>
-                  <li>
-                    <a onClick={()=>{flux.doAction('publish')}}><span className="glyphicon glyphicon-share" aria-hidden="true"></span></a>
-                  </li>
-                  <li>
-                    <a onClick={()=>{flux.doAction('generateAlbum',"pdf")}}><span className="glyphicon glyphicon-print" aria-hidden="true"></span></a>
-                  </li>
-                  <li>
-                    <a onClick={()=>{flux.doAction('generateAlbum',"jpg")}}><span className="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
-                  </li>
-
-                </ul>
-              </div>
             </div>
-          </nav>
+          </div>
+        </nav>
         <div style={{paddingTop:70}}>
-          <div className="row">
-            <div className="col-sm-4 col-md-2">{steps[this.state.compState].component}</div>
-            <div className="col-sm-8 col-md-10">{this.state.schema === undefined ? "No album selected" :
+          <SplitPane split="vertical" defaultSize="320" minSize="50" >
+            <div style={{marginLeft:10, marginRight:10}} >{steps[this.state.compState].component}</div>
+            <div style={{marginLeft:5}}>{this.state.schema === undefined ? "No album selected" :
               <ImageGalleryView schema={this.state.schema} pageOptions={this.state.wizardData.pageOptions}
                                 wizardData={this.state.wizardData} dataContext={dataContext}/>}</div>
-          </div>
+
+          </SplitPane>
         </div>
       </div>
     );

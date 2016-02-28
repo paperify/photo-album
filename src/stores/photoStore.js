@@ -7,19 +7,19 @@ import { createHashHistory } from 'history';
 import {toSchema,toData} from '../components/utils/repeatTemplate';
 import wizardStyles from '../components/utils/wizardStyles';
 
-
-var WordsAndImages = require("json!./templates/Words and images.json");
-var RedAndWhite = require("json!./templates/ReadAndWhite.json");
-//var WordsAndImages2 = require("json!./templates/Words and images 2.json");
-
 //const history = createHistory();
 //console.log(browserHistory);
 let history = createHashHistory();
-//  var url = 'http://photo-papermill.rhcloud.com';
+//var url = 'http://photo-papermill.rhcloud.com';
 //var url = 'http://render-pergamon.rhcloud.com';
 var url = 'http://localhost:8080';
 
 var reloadAlbum = function (url, imageSize, successCallback) {
+  if (url.indexOf('Orchard') !== -1){reloadOrchardAlbum(url,successCallback)}
+  else reloadPicasaAlbum(url,imageSize,successCallback);
+}
+
+var reloadPicasaAlbum = function (url, imageSize, successCallback) {
 
   $.ajax({
     dataType: 'jsonp',
@@ -68,6 +68,34 @@ var reloadAlbum = function (url, imageSize, successCallback) {
     }
   })
 }
+var reloadOrchardAlbum = function (url, successCallback) {
+
+  $.ajax({
+    type: "GET",
+    dataType: 'json',
+    url: url,
+    success: function (data) {
+      var photos = [];
+      var counter = 0;
+      $.each(data, function (index,item) {
+
+        var url = item.Url;
+        var newImage  =  {url:url, width:item.Width, height:item.Height};
+        var desc = item.Description;
+        var title = item.Title;
+        var thumbnail =  url;
+
+        newImage =  _.extend(newImage,{id:counter++,description:desc,thumbnailUrl:thumbnail, title:title});
+        photos.push(newImage);
+
+      });
+      successCallback(photos);
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      alert("failed");
+    }
+  })
+}
 var getSchema = function(templateName, photos, coverPage){
   var template = _.cloneDeep(photoStore.templates[templateName]);
   return toSchema(template,photos,coverPage);
@@ -76,7 +104,8 @@ var generateSchema = function(photos,wizardData){
   var gallery = new ImageGallery("ImageGallery",photos, wizardData.template, wizardData.pageOptions);
   return gallery.generate();
 }
-var dataServiceUrl = "http://localhost:8080";
+//var dataServiceUrl = "http://localhost:8080";
+var dataServiceUrl = url;//'http://photo-papermill.rhcloud.com';
 
 var photoStore = flux.createStore({
   id: 'photoStore',
@@ -85,8 +114,9 @@ var photoStore = flux.createStore({
     wizardData: WizardData.default,
     history:history,
     templates:{
-      WordsAndImages:WordsAndImages,
-      RedAndWhite:RedAndWhite
+      WordsAndImages:require("json!./templates/Words and images.json"),
+      RedAndWhite:require("json!./templates/ReadAndWhite.json"),
+      YellowAndBlack: require("json!./templates/YellowAndBlack.json")
     }
   },
   actionCallbacks: {
@@ -99,8 +129,11 @@ var photoStore = flux.createStore({
 
       var url = 'https://picasaweb.google.com/data/feed/api/user/' + currentUser.id;
       $.ajax({
-        dataType: 'json',
+        dataType: 'jsonp',
         url: url,
+        data: {
+          alt: 'json-in-script'
+        },
         jsonpCallback: 'picasaCallback',
         success: function (data) {
           var photos = [];
@@ -115,7 +148,6 @@ var photoStore = flux.createStore({
 
           });
           updater.set({privateAlbums: albums, user: currentUser});
-          console.log(currentUser);
           $.ajax({
             type: "GET",
             url: dataServiceUrl + "/users?authId=" + currentUser.id,
@@ -156,7 +188,7 @@ var photoStore = flux.createStore({
       var state = photoStore.getState();
       var album = state.selectedAlbum;
       var wizardData = state.wizardData;
-      var schemaData = toData(state.schema,wizardData.photos);
+      var schemaData = toData(state.schema,wizardData);
       var schema = _.cloneDeep(state.schema);
 
       //apply wizard styles to schema
@@ -169,9 +201,8 @@ var photoStore = flux.createStore({
         dataType: 'json',
         //contentType: 'application/json',
         success: function (data) {
-          console.log(data);
           updater.set({
-            published:data._id
+            published:{name:data.name,url: 'http://rsamec.github.io/react-html-pages-renderer/#/' + "/book/" + data._id}
           })
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -183,11 +214,13 @@ var photoStore = flux.createStore({
       if (templateName === undefined) templateName = photoStore.templateName || "None";
 
       var wizardData = _.extend(photoStore.wizardData,{templateName:templateName});
-
       reloadAlbum(album.url, 'original', (photos) => {
         wizardData.photos = photos;
+        wizardData.album = album;
+        //wizardData.owner = photoStore.owner;
+        wizardData.user =
         updater.set({
-          selectedAlbum: _.extend(_.clone(album), {photos: photos}),
+          selectedAlbum: _.extend(_.clone(album),{photos:photos}),
           wizardData: wizardData,
           templateName:templateName,
           schema:templateName === "None"?generateSchema(photos,wizardData): getSchema(templateName, photos,wizardData.template && wizardData.template.useCoverPage)
@@ -212,7 +245,7 @@ var photoStore = flux.createStore({
       //apply wizard styles to schema
       wizardStyles(schema,wizardData && wizardData.styles);
 
-      var data = toData(schema,wizardData.photos);
+      var data = toData(schema,wizardData);
 
       var contentType = 'image/' + type;
       if (type === "pdf") contentType = 'application/pdf';
@@ -249,7 +282,7 @@ var photoStore = flux.createStore({
       //apply wizard styles to schema
       wizardStyles(schema, wizardData && wizardData.styles);
 
-      var data = toData(schema,wizardData.photos);
+      var data = toData(schema,wizardData);
 
       var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
       xmlhttp.open("POST", url + '/' + type);

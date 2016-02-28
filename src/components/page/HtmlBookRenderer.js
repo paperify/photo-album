@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import GraphicUtil from '../utils/graphicUtil'
-import HtmlPagesRenderer from '../renderer/HtmlPagesRenderer';
+import HtmlPagesRenderer from 'react-html-pages-renderer';
 
 export default class HtmlBookRenderer extends React.Component{
   componentDidMount () {

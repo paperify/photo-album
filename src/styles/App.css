@@ -25,6 +25,10 @@
   text-align: center;
   min-width: 100%;
 }
+.ReactModal__Content.modal-dialog {
+  border: none !important;
+  background-color: transparent !important;
+}
 .Resizer {
   background: #000;
   opacity: .2;

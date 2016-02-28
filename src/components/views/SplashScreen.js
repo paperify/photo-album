@@ -22,6 +22,18 @@ var popularGalleries = [
     url: 'https://picasaweb.google.com/data/feed/base/user/108972862430615180924/albumid/5893839506781107985',
     coverImageUrl: 'https://lh3.googleusercontent.com/060sxhBzanylB29dheLUVfIXBqfRCZxbBWFW7-FyB_QcmcvH-Bk=w317-h210-p-no'
   }
+];
+var zsDolniHbityGalleries =[
+  {
+    name: 'Stavění domečků',
+    url: 'http://localhost/zsdh/api/Orchard.RS.ImageGalleryApi/ImageGallery/38',
+    coverImageUrl: 'http://localhost/zsdh/Media/Default/Photo/SD/2014-2015/Domecky/Fotografie0661-1.jpg'
+  },
+  {
+    name: 'Družinové nocování',
+    url: 'http://localhost/zsdh/api/Orchard.RS.ImageGalleryApi/ImageGallery/39',
+    coverImageUrl: 'http://localhost/zsdh/Media/Default/Photo/SD/2007-2008/01druzinove-nocovani-rijen-2008/dn4-1.jpg'
+  }
 
 ];
 const Menu = React.createClass({
@@ -36,7 +48,7 @@ const Menu = React.createClass({
       <ContextMenu identifier="multi">
         <MenuItem onSelect={this.handleClick} data={{item: "WordsAndImages"}}>Words and Images</MenuItem>
         <MenuItem onSelect={this.handleClick} data={{item: "RedAndWhite"}}>Red and White</MenuItem>
-        <MenuItem onSelect={this.handleClick} data={{item: "Artistic"}}>Artistic</MenuItem>
+        <MenuItem onSelect={this.handleClick} data={{item: "BlackAndYellow"}}>Artistic</MenuItem>
         <MenuItem onSelect={this.handleClick} data={{item: "Travel"}}>Travel</MenuItem>
       </ContextMenu>
     );
@@ -145,6 +157,14 @@ export default class SplashScreen extends React.Component {
       <div style={listStyle}>
         {
           popularGalleries.map(function (item, index) {
+            return <TileWithMenu key={item.name + index} name={item} item={item} itemClick={this.selectAlbum}/>
+          }, this)
+        }
+      </div>
+      <h3>ZŠ a MŠ Dolní Hbity</h3>
+      <div style={listStyle}>
+        {
+          zsDolniHbityGalleries.map(function (item, index) {
             return <TileWithMenu key={item.name + index} name={item} item={item} itemClick={this.selectAlbum}/>
           }, this)
         }

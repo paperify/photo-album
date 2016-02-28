@@ -7,10 +7,8 @@ import Main from './Main';
 
 import PhotoStore from '../stores/photoStore';
 import SplashScreen from './views/SplashScreen';
-import HtmlBookViewer from './views/SwipeBookViewer';
+import HtmlBookViewer from './views/HtmlBookViewer';
 import Wizard from './views/Wizard';
-import SimpleViewer from './views/SimpleViewer';
-
 
 // Render the main component into the dom
 ReactDOM.render((
@@ -21,7 +19,6 @@ ReactDOM.render((
 
       <Route path="htmlBook" component={HtmlBookViewer} />
       <Route path="wizard" component={Wizard}/>
-      <Route path="viewer/:id" component={SimpleViewer}/>
     </Route>
   </Router>
 ), document.getElementById('app'));

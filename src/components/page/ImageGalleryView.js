@@ -3,7 +3,7 @@ import React from 'react';
 import Binder from 'react-binding';
 
 import Widgets from './WidgetFactory';
-import HtmlPagesRenderer from '../renderer/HtmlPagesRenderer';
+import HtmlPagesRenderer from 'react-html-pages-renderer';
 import {ImageGallery} from '../layout/ImageGallery';
 import templateRepeater from '../utils/repeatTemplate';
 import convertToHash from '../utils/convertToHash';

@@ -12,17 +12,31 @@ const bindTo = function(self, x,index){
   }
 }
 
-export function toData(schema,photos,useCoverPage){
-  var templateImageCount = (schema.props && schema.props.defaultData && schema.props.defaultData.images.length) || 0;
+const findMaxImageIndex = function(page) {
+  var indexes = [];
+  traverse(page).reduce(function (acc,x) {
+    if (this.key === "path" && !!x) {
+      var pos = x.indexOf(BINDING_KEY + ".");
+      if (pos !== -1) acc.push(parseInt(x.substr(pos).split('.')[1], 10));
+    }
+    return acc;
+  },indexes);
+  return _.max(indexes);
+}
 
-  var data = {};
+export function toData(schema,wizardData,useCoverPage){
+  var photos = wizardData.photos;
+  var defaultData = schema.props && schema.props.defaultData || {};
+  var templateImageCount = (defaultData.images && defaultData.images.length) || 0;
+
+  var data = _.omit(defaultData,'images');
   var groupImages = _.chunk(photos, templateImageCount);
   for (var i = 0; i !== groupImages.length; i++) {
     var images = groupImages[i];
 
     data['t' + i] = {images: convertToHash(images)};
   }
-  return data;
+  return _.extend(data,{album:wizardData.album});
 }
 
 export function toSchema(schema,photos,useCoverPage) {
@@ -40,15 +54,15 @@ export function toSchema(schema,photos,useCoverPage) {
     schema.containers = [coverPage]
   }
 
-  templatePages = _.rest(templatePages);
+  //templatePages = _.rest(templatePages);
   //var pageCount = schema.containers.length;
-  //var imageCount = photos.length;
+  var imageCount = photos.length;
   var templateImageCount = (schema.props.defaultData && schema.props.defaultData.images.length) || 0;
   console.log("ImageCount:" + templateImageCount);
 
 
   var groupImages = _.chunk(photos, templateImageCount);
-  for (var i = 0; i !== groupImages.length -1; i++) {
+  for (var i = 0; i !== groupImages.length; i++) {
     //var images = groupImages[i];
     //
     //data['t' + i] = {images:convertToHash(images)};
@@ -61,9 +75,13 @@ export function toSchema(schema,photos,useCoverPage) {
         }
       });
 
+    var lastItem = i === groupImages.length-1;
     _.each(pages,function(page,index){
-      schema.containers.push(page)
+
+      //last group
+      if (!(lastItem && findMaxImageIndex(page) >=  imageCount))  schema.containers.push(page);
     });
+    imageCount -= templateImageCount;
   }
 
 

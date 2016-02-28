@@ -3,7 +3,8 @@ import flux from 'fluxify';
 
 //stores
 import PhotoStore from '../../stores/photoStore';
-
+import {toData} from '../utils/repeatTemplate';
+import wizardStyles from '../utils/wizardStyles';
 
 const iconStyle = {fontSize:30,marginLeft:10};
 export default class SummaryStep extends React.Component {
@@ -20,10 +21,19 @@ export default class SummaryStep extends React.Component {
   generateJsonFiles() {
     var album = this.props.album;
 
-    var exportSchema = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(PhotoStore.schema, null, 2));
+    var wizardData = PhotoStore.wizardData;
+    var schema = _.cloneDeep(PhotoStore.schema);
+
+    //apply wizard styles to schema
+
+    wizardStyles(schema, wizardData && wizardData.styles);
+
+    schema.props.defaultData = toData(schema, wizardData);
+
+    var exportSchema = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(schema, null, 2));
     var exportSchemaName = album.name;
 
-    var exportWizardData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(PhotoStore.wizardData, null, 2));
+    var exportWizardData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(wizardData, null, 2));
     var exportWizardDataName = album.name + "_data";
 
     this.setState({

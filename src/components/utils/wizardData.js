@@ -49,6 +49,7 @@ var defaultWizardData = function(imageSize)
       },
       text:{
         font: {
+          color:{color:'#ffffff'}
         }
       }
     },

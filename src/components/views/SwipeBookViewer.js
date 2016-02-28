@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import Binder from 'react-binding';
 import flux from 'fluxify';
-import HtmlPagesRenderer from '../renderer/HtmlPagesRenderer';
+import HtmlPagesRenderer from 'react-html-pages-renderer';
 import PhotoStore from '../../stores/photoStore';
 import Brand from '../utils/brand';
 import Widgets from '../page/WidgetFactory';
@@ -78,7 +78,7 @@ class HtmlBook extends React.Component {
     //apply wizard styles to schema
     wizardStyles(schema,this.state.wizardData && this.state.wizardData.styles);
 
-    var data = toData(schema,this.state.wizardData.photos);
+    var data = toData(schema,this.state.wizardData);
     var dataContext = Binder.bindToState({state:{data:data}},'data');
     var pageOptions = this.state.wizardData && this.state.wizardData.pageOptions;
 

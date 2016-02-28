@@ -1,6 +1,12 @@
 body{
   //background-image: url(https://snap-photos.s3.amazonaws.com/img-thumbs/960w/I98ZOPE9FM.jpg) no-repeat center center fixed;
 }
+body.wizard
+{
+  //overflow-x: hidden;
+  //overflow:hidden;
+}
+
 .flex-container {
   display: flex;
   flex-direction:row;
@@ -31,6 +37,10 @@ body{
     min-width:100%;
   }
 }
+.ReactModal__Content.modal-dialog {
+  border: none !important;
+  background-color: transparent !important;
+}
 
 .Resizer {
   background: #000;
@@ -42,6 +52,7 @@ body{
   -moz-background-clip: padding;
   -webkit-background-clip: padding;
   background-clip: padding-box;
+
 }
 
 .Resizer:hover {

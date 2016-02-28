@@ -33,7 +33,7 @@ class List extends React.Component {
 
     return (
       <div>
-        <div style={{position:'fixed',marginLeft:20}}>
+        <div style={{position:'fixed',paddingLeft:200,zIndex:10, background:'#ffffff'}}>
           <button disabled={!canUp} type="button" className="btn btn-default" aria-label="Left Align"
                   onClick={this.up.bind(this)}>
             <span className="glyphicon glyphicon-circle-arrow-down" aria-hidden="true"></span>
@@ -112,7 +112,7 @@ class Item extends React.Component {
           </tr>
           <tr>
             <td>
-              <img src={itemValue.thumbnailUrl}/>
+              <img src={itemValue.thumbnailUrl} style={{maxWidth:250}}/>
             </td>
             <td style={{verticalAlign:'top'}}>
               {descValue}

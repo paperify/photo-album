@@ -75,8 +75,11 @@
     "react-color": "^1.3.0",
     "react-contextmenu": "^0.3.0",
     "react-dom": "^0.14.0",
+    "react-html-pages-renderer": "^1.5.1",
     "react-input-range": "^0.5.1",
     "react-loader": "^2.0.0",
+    "react-modal": "^0.6.1",
+    "react-photo-widget-factory": "^1.2.0",
     "react-split-pane": "^0.1.20"
   }
 }
